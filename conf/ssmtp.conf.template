@@ -1,0 +1,4 @@
+/etc/ssmtp/ssmtp.conf
+mailhub=mail:25
+hostname=%MY_HOSTNAME%
+FromLineOverride=YES
