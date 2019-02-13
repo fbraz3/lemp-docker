@@ -27,7 +27,7 @@ cd /var/www/html && ( \
 
 COPY ./conf/ssmtp.conf.template /etc/ssmtp/
 COPY ./monit/monitrc /etc/monit/
-COPY ./monit/cron ./monit/php-fpm /etc/monit/conf-enabled/
+COPY ./monit/cron ./monit/php-fpm ./monit/nginx /etc/monit/conf-enabled/
 COPY ./php/www.conf /etc/php/$PHP_VERSION/fpm/pool.d/
 COPY ./php/php-fpm.conf ./php/php.ini ./conf/env.conf /etc/php/$PHP_VERSION/fpm/
 COPY ./nginx/default /etc/nginx/sites-enabled/default
