@@ -29,6 +29,20 @@ if [ -z "$PHPVERSION" ]; then
     PHPVERSION='7.3'
 fi
 
+#SORRY FOR THAT =(
+if [ -f "/etc/php/fpm/php-fpm.conf" ]; then
+    $(which cp) -f /etc/php/fpm/php-fpm.conf /etc/php/$PHPVERSION/fpm/php-fpm.conf
+fi
+
+if [ -f "/etc/php/fpm/php.ini" ]; then
+    $(which cp) -f /etc/php/fpm/php.ini /etc/php/$PHPVERSION/fpm/php.ini
+fi
+
+if [ -f "/etc/php/fpm/pool.d/www.conf" ]; then
+    $(which cp) -f /etc/php/fpm/pool.d/www.conf /etc/php/$PHPVERSION/fpm/pool.d/www.conf
+fi
+
+#POPULATE ENV
 echo > /etc/php/$PHPVERSION/fpm/env.conf
 for i in `/usr/bin/env`; do
     PARAM=`echo $i |cut -d"=" -f1`
