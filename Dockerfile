@@ -12,11 +12,11 @@ chmod +x /docker-entrypoint.sh; \
 mkdir /app; \
 mkdir /run/php/; \
 apt-get update; \
-apt-get install -y software-properties-common apt-transport-https cron vim ssmtp monit wget unzip curl less git; 
+apt-get install -y software-properties-common apt-transport-https cron vim ssmtp monit wget unzip curl less git;
 
 RUN add-apt-repository -y ppa:ondrej/php; \
 export DEBIAN_FRONTEND=noninteractive; \ 
-apt-get install -yq nginx php$PHP_VERSION php$PHP_VERSION-cli php$PHP_VERSION-common php$PHP_VERSION-curl php$PHP_VERSION-fpm php$PHP_VERSION-json php$PHP_VERSION-mysql php$PHP_VERSION-opcache php$PHP_VERSION-readline php$PHP_VERSION-xml php$PHP_VERSION-xsl php$PHP_VERSION-gd php$PHP_VERSION-intl php$PHP_VERSION-bz2 php$PHP_VERSION-bcmath php$PHP_VERSION-imap php$PHP_VERSION-gd php$PHP_VERSION-mbstring php$PHP_VERSION-pgsql php$PHP_VERSION-sqlite3 php$PHP_VERSION-xmlrpc php$PHP_VERSION-zip  php$PHP_VERSION-odbc php$PHP_VERSION-snmp php$PHP_VERSION-interbase php$PHP_VERSION-ldap php$PHP_VERSION-tidy php$PHP_VERSION-memcached php-tcpdf php-redis php-imagick; \
+apt-get install -yq nginx php$PHP_VERSION php$PHP_VERSION-cli php$PHP_VERSION-common php$PHP_VERSION-curl php$PHP_VERSION-fpm php$PHP_VERSION-json php$PHP_VERSION-mysql php$PHP_VERSION-opcache php$PHP_VERSION-readline php$PHP_VERSION-xml php$PHP_VERSION-xsl php$PHP_VERSION-gd php$PHP_VERSION-intl php$PHP_VERSION-bz2 php$PHP_VERSION-bcmath php$PHP_VERSION-imap php$PHP_VERSION-gd php$PHP_VERSION-mbstring php$PHP_VERSION-pgsql php$PHP_VERSION-sqlite3 php$PHP_VERSION-xmlrpc php$PHP_VERSION-zip  php$PHP_VERSION-odbc php$PHP_VERSION-snmp php$PHP_VERSION-interbase php$PHP_VERSION-ldap php$PHP_VERSION-tidy php$PHP_VERSION-memcached php-tcpdf php-redis php-imagick php-mongodb; \
 if [ $PHP_VERSION \> 7 ] && [ $PHP_VERSION \< 7.4 ]; then \
     echo 'deb https://packagecloud.io/phalcon/stable/ubuntu/ bionic main' > /etc/apt/sources.list.d/phalcon_stable.list; \
     echo 'deb-src https://packagecloud.io/phalcon/stable/ubuntu/ bionic main' >> /etc/apt/sources.list.d/phalcon_stable.list; \
@@ -42,7 +42,7 @@ chmod +x /opt/wp-cli/wp-cli.phar; \
 ln -s /opt/wp-cli/wp-cli.phar /usr/local/bin/wp; \
 )
 
-RUN mkdir /opt/composer && \ 
+RUN mkdir /opt/composer && \
 cd /opt/composer && ( \
 php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"; \
 php -r "if (hash_file('sha384', 'composer-setup.php') === 'a5c698ffe4b8e849a443b120cd5ba38043260d5c4023dbf93e1558871f1f07f58274fc6f4c93bcfd858c6bd0775cd8d1') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"; \
