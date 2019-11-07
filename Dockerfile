@@ -18,6 +18,8 @@ RUN apt-get install -y software-properties-common apt-transport-https \
 cron vim ssmtp monit wget unzip curl less git nginx; \
 /usr/bin/unattended-upgrades -v;
 
+RUN apt-get install -y nginx;
+
 RUN add-apt-repository -y ppa:ondrej/php; \
 export DEBIAN_FRONTEND=noninteractive; \
 apt-get install -yq php$PHP_VERSION php$PHP_VERSION-cli \
