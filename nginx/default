@@ -6,9 +6,9 @@ server {
     root /app/public;
     index index.php index.html index.htm;
 
-	location /pma/ {
-		root /var/www/html;
-		index index.php;
+    location /pma/ {
+        root /var/www/html;
+        index index.php;
 
         location ~ \.php$ {
             fastcgi_buffer_size 128k;
@@ -21,7 +21,7 @@ server {
             include /etc/nginx/fastcgi_params;
             fastcgi_read_timeout 300;
         }
-	}
+    }
 
     location / {
         try_files $uri $uri/ /index.php$is_args$args;
@@ -40,6 +40,6 @@ server {
     }
 
     location ~ /\.ht {
-            deny all;
+        deny all;
     }
 }
