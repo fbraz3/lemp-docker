@@ -37,12 +37,12 @@ RUN if [ $PHP_VERSION \> 7 ] && [ $PHP_VERSION \< 7.4 ]; then \
     echo 'deb-src https://packagecloud.io/phalcon/stable/ubuntu/ bionic main' >> /etc/apt/sources.list.d/phalcon_stable.list; \
     wget -qO- 'https://packagecloud.io/phalcon/stable/gpgkey' | apt-key add -; \
     apt-get update; \
-    apt-get install php$PHP_VERSION-phalcon; \
+    apt-get install -yq php$PHP_VERSION-phalcon; \
 fi;
 
 #path phalcon psr modules (PHP 7.2 or higher)
 RUN if [ $PHP_VERSION \> 7.1 ]; then \
-    apt-get install php-psr
+    apt-get install -yq php-psr php$PHP_VERSION-phalcon=3.4.5-1+php$PHP_VERSION
 fi;
 
 RUN apt-get install -yq mariadb-server mariadb-client; \
