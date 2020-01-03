@@ -1,6 +1,7 @@
 FROM ubuntu:18.04
 
 ARG PHP_VERSION=7.3
+ARG PHALCON_VERSION="3.4.5-1"
 ARG PHPMYADMIN=4.8.5
 
 COPY ./scripts/autoclean.sh /root/
@@ -20,6 +21,7 @@ cron vim ssmtp monit wget unzip curl less git nginx; \
 
 RUN apt-get install -y nginx;
 
+#php-base
 RUN add-apt-repository -y ppa:ondrej/php; \
 export DEBIAN_FRONTEND=noninteractive; \
 apt-get install -yq php$PHP_VERSION php$PHP_VERSION-cli \
@@ -32,19 +34,21 @@ php$PHP_VERSION-xmlrpc php$PHP_VERSION-zip php$PHP_VERSION-odbc php$PHP_VERSION-
 php$PHP_VERSION-interbase php$PHP_VERSION-ldap php$PHP_VERSION-tidy \
 php$PHP_VERSION-memcached php-tcpdf php-redis php-imagick php-mongodb;
 
-RUN if [ $PHP_VERSION \> 7 ] && [ $PHP_VERSION \< 7.4 ]; then \
+#php-phalcon
+RUN if [ $PHP_VERSION \> 7 ]; then \
     echo 'deb https://packagecloud.io/phalcon/stable/ubuntu/ bionic main' > /etc/apt/sources.list.d/phalcon_stable.list; \
     echo 'deb-src https://packagecloud.io/phalcon/stable/ubuntu/ bionic main' >> /etc/apt/sources.list.d/phalcon_stable.list; \
     wget -qO- 'https://packagecloud.io/phalcon/stable/gpgkey' | apt-key add -; \
     apt-get update; \
-    apt-get install -yq php$PHP_VERSION-phalcon; \
+fi; \
+if [ $PHP_VERSION \> 7 ] && [ $PHP_VERSION \< 7.4 ]; then \
+    apt-get install -yq php$PHP_VERSION-phalcon=$PHALCON_VERSION+php$PHP_VERSION; \
+fi; \
+if [ $PHP_VERSION \> 7.3 ]; then \
+    apt-get install -yq php$PHP_VERSION-phalcon php-psr; \
 fi;
 
-#path phalcon psr modules (PHP 7.2 or higher)
-RUN if [ $PHP_VERSION \> 7.1 ]; then \
-    apt-get install -yq php-psr php$PHP_VERSION-phalcon=3.4.5-1+php$PHP_VERSION
-fi;
-
+#oh maria!
 RUN apt-get install -yq mariadb-server mariadb-client; \
 cd /var/www/html && ( \
   wget -q https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN/phpMyAdmin-$PHPMYADMIN-all-languages.zip; \
@@ -53,6 +57,7 @@ cd /var/www/html && ( \
   rm -f phpMyAdmin-$PHPMYADMIN-all-languages.zip; \
 );
 
+#php-cli
 RUN mkdir /opt/wp-cli && \
 cd /opt/wp-cli && ( \
     wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
@@ -60,15 +65,13 @@ cd /opt/wp-cli && ( \
     ln -s /opt/wp-cli/wp-cli.phar /usr/local/bin/wp; \
 )
 
+#let`s compose!
 RUN mkdir /opt/composer; \
 cd /opt/composer && ( \
-    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"; \
-    php composer-setup.php; \
-    php -r "unlink('composer-setup.php');"; \
-    chmod +x composer.phar; \
-    ln -s /opt/composer/composer.phar /usr/local/bin/composer \
+    wget https://raw.githubusercontent.com/composer/getcomposer.org/master/web/installer -O - -q | php -- --quiet; \
 )
 
+#phalcon devtools
 RUN cd /opt && ( \
     git clone https://github.com/phalcon/phalcon-devtools.git; \
     cd phalcon-devtools; \
