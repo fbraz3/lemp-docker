@@ -40,6 +40,11 @@ RUN if [ $PHP_VERSION \> 7 ] && [ $PHP_VERSION \< 7.4 ]; then \
     apt-get install php$PHP_VERSION-phalcon; \
 fi;
 
+#path phalcon psr modules (PHP 7.2 or higher)
+RUN if [ $PHP_VERSION \> 7.1 ]; then \
+    apt-get install php-psr
+fi;
+
 RUN apt-get install -yq mariadb-server mariadb-client; \
 cd /var/www/html && ( \
   wget -q https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN/phpMyAdmin-$PHPMYADMIN-all-languages.zip; \
@@ -55,10 +60,9 @@ cd /opt/wp-cli && ( \
     ln -s /opt/wp-cli/wp-cli.phar /usr/local/bin/wp; \
 )
 
-RUN mkdir /opt/composer && \
+RUN mkdir /opt/composer; \
 cd /opt/composer && ( \
     php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"; \
-    php -r "if (hash_file('sha384', 'composer-setup.php') === 'a5c698ffe4b8e849a443b120cd5ba38043260d5c4023dbf93e1558871f1f07f58274fc6f4c93bcfd858c6bd0775cd8d1') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"; \
     php composer-setup.php; \
     php -r "unlink('composer-setup.php');"; \
     chmod +x composer.phar; \
