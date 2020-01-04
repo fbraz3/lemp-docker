@@ -40,12 +40,12 @@ RUN if [ $PHP_VERSION \> 7 ]; then \
     echo 'deb-src https://packagecloud.io/phalcon/stable/ubuntu/ bionic main' >> /etc/apt/sources.list.d/phalcon_stable.list; \
     wget -qO- 'https://packagecloud.io/phalcon/stable/gpgkey' | apt-key add -; \
     apt-get update; \
-fi; \
-if [ $PHP_VERSION \> 7 ] && [ $PHP_VERSION \< 7.4 ]; then \
-    apt-get install -yq php$PHP_VERSION-phalcon=$PHALCON_VERSION+php$PHP_VERSION; \
-fi; \
-if [ $PHP_VERSION \> 7.3 ]; then \
-    apt-get install -yq php$PHP_VERSION-phalcon php-psr; \
+    if [ $PHP_VERSION \< 7.4 ]; then \
+        apt-get install -yq php$PHP_VERSION-phalcon=$PHALCON_VERSION+php$PHP_VERSION; \
+    fi; \
+    if [ $PHP_VERSION \> 7.3 ]; then \
+        apt-get install -yq php$PHP_VERSION-phalcon php-psr; \
+    fi;
 fi;
 
 #oh maria!
@@ -57,7 +57,7 @@ cd /var/www/html && ( \
   rm -f phpMyAdmin-$PHPMYADMIN-all-languages.zip; \
 );
 
-#php-cli
+#wp-cli
 RUN mkdir /opt/wp-cli && \
 cd /opt/wp-cli && ( \
     wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
