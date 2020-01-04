@@ -45,7 +45,7 @@ RUN if [ $PHP_VERSION \> 7 ]; then \
     fi; \
     if [ $PHP_VERSION \> 7.3 ]; then \
         apt-get install -yq php$PHP_VERSION-phalcon php-psr; \
-    fi;
+    fi; \
 fi;
 
 #oh maria!
