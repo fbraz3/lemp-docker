@@ -69,6 +69,7 @@ cd /opt/wp-cli && ( \
 RUN mkdir /opt/composer; \
 cd /opt/composer && ( \
     wget https://raw.githubusercontent.com/composer/getcomposer.org/master/web/installer -O - -q | php -- --quiet; \
+    ln -s /opt/composer/composer.phar /usr/local/bin/composer; \
 )
 
 #phalcon devtools
