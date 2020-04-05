@@ -75,12 +75,12 @@ for i in `/usr/bin/env`; do
     fi
 
     if [[ $PARAM =~ ^PHPADMIN_.+ ]]; then
-        PHPPARAM=`echo $PARAM |sed 's/PHPADMIN_//g' | awk '{print tolower($0)}'`
+        PHPPARAM=`echo $PARAM |sed 's/PHPADMIN_//g' | sed 's/__/./g' | awk '{print tolower($0)}'`
         echo "PHPADMIN   :: $PHPPARAM => $VAL"
         echo "php_admin_value[$PHPPARAM] =\"$VAL\"" >> /etc/php/$PHPVERSION/fpm/phpconf.conf
 
     elif [[ $PARAM =~ ^PHPFLAG_.+ ]]; then
-        PHPPARAM=`echo $PARAM |sed 's/PHPFLAG_//g' | awk '{print tolower($0)}'`
+        PHPPARAM=`echo $PARAM |sed 's/PHPFLAG_//g' | sed 's/__/./g' | awk '{print tolower($0)}'`
         echo "PHPFLAG    :: $PHPPARAM => $VAL"
         echo "php_flag[$PHPPARAM]=\"$VAL\"" >> /etc/php/$PHPVERSION/fpm/phpconf.conf
 
