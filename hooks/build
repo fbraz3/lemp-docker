@@ -7,7 +7,7 @@ echo "-----------------------------------------------------"
 
 docker build --build-arg PHP_VERSION=${DOCKER_TAG} -f $DOCKERFILE_PATH -t $IMAGE_NAME .
 
-if [ "$DOCKER_TAG" == "7.3" ]; then
+if [ "$DOCKER_TAG" == "7.4" ]; then
   docker tag fbraz3/lnmp:$DOCKER_TAG fbraz3/lnmp:latest
   docker push fbraz3/lnmp:latest
 fi
