@@ -16,10 +16,19 @@ mkdir -p /app/public; \
 apt-get update;
 
 RUN apt-get install -y software-properties-common apt-transport-https \
-cron vim ssmtp monit wget unzip curl less git nginx; \
+cron vim ssmtp monit wget unzip curl less git; \
 /usr/bin/unattended-upgrades -v;
 
 RUN apt-get install -y nginx;
+
+#oh maria!
+RUN apt-get install -yq mariadb-server mariadb-client; \
+cd /var/www/html && ( \
+  wget -q https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN/phpMyAdmin-$PHPMYADMIN-all-languages.zip; \
+  unzip -oq phpMyAdmin-$PHPMYADMIN-all-languages.zip; \
+  mv phpMyAdmin-$PHPMYADMIN-all-languages pma; \
+  rm -f phpMyAdmin-$PHPMYADMIN-all-languages.zip; \
+);
 
 #php-base
 RUN add-apt-repository -y ppa:ondrej/php; \
@@ -47,15 +56,6 @@ RUN if [ $PHP_VERSION \> 7 ]; then \
         apt-get install -yq php$PHP_VERSION-phalcon php-psr; \
     fi; \
 fi;
-
-#oh maria!
-RUN apt-get install -yq mariadb-server mariadb-client; \
-cd /var/www/html && ( \
-  wget -q https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN/phpMyAdmin-$PHPMYADMIN-all-languages.zip; \
-  unzip -oq phpMyAdmin-$PHPMYADMIN-all-languages.zip; \
-  mv phpMyAdmin-$PHPMYADMIN-all-languages pma; \
-  rm -f phpMyAdmin-$PHPMYADMIN-all-languages.zip; \
-);
 
 #wp-cli
 RUN mkdir /opt/wp-cli && \
