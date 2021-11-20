@@ -31,8 +31,9 @@ cd /var/www/html && ( \
 );
 
 #php-base
-RUN add-apt-repository -y ppa:ondrej/php; \
-export DEBIAN_FRONTEND=noninteractive; \
+RUN add-apt-repository -y ppa:ondrej/php;
+
+RUN export DEBIAN_FRONTEND=noninteractive; \
 apt-get install -yq php$PHP_VERSION php$PHP_VERSION-cli \
 php$PHP_VERSION-common php$PHP_VERSION-curl php$PHP_VERSION-fpm php$PHP_VERSION-json \
 php$PHP_VERSION-mysql php$PHP_VERSION-opcache php$PHP_VERSION-readline \
