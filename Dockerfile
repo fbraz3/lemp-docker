@@ -82,6 +82,10 @@ RUN cd /opt && ( \
         chmod +x phalcon; \
         ln -s /opt/phalcon-devtools/phalcon /usr/local/bin/phalcon; \
     )
+    
+## Install Symfony CLI
+RUN curl -sS https://get.symfony.com/cli/installer | bash
+RUN mv $HOME/.symfony5/bin/symfony /usr/local/bin/symfony
 
 COPY ./conf/ssmtp.conf.template /etc/ssmtp/
 COPY ./monit/monitrc /etc/monit/
