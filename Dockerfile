@@ -15,7 +15,7 @@ RUN echo $PHP_VERSION > /PHP_VERSION; \
     mkdir -p /app/public; \
     apt-get update;
 
-RUN export DEBIAN_FRONTEND=noninteractive; apt-get install -y software-properties-common apt-transport-https \
+RUN export DEBIAN_FRONTEND=noninteractive; apt-get install -yq software-properties-common apt-transport-https \
     cron vim ssmtp monit wget unzip curl less git; \
     /usr/bin/unattended-upgrades -v;
 
