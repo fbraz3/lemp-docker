@@ -15,14 +15,14 @@ RUN echo $PHP_VERSION > /PHP_VERSION; \
     mkdir -p /app/public; \
     apt-get update;
 
-RUN apt-get install -y software-properties-common apt-transport-https \
+RUN export DEBIAN_FRONTEND=noninteractive; apt-get install -y software-properties-common apt-transport-https \
     cron vim ssmtp monit wget unzip curl less git; \
     /usr/bin/unattended-upgrades -v;
 
 RUN apt-get install -y nginx;
 
 #oh maria!
-RUN apt-get install -yq mariadb-server mariadb-client; \
+RUN export DEBIAN_FRONTEND=noninteractive; apt-get install -yq mariadb-server mariadb-client; \
     cd /var/www/html && ( \
       wget -q https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN/phpMyAdmin-$PHPMYADMIN-all-languages.zip; \
       unzip -oq phpMyAdmin-$PHPMYADMIN-all-languages.zip; \
