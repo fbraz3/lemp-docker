@@ -47,18 +47,18 @@ RUN export DEBIAN_FRONTEND=noninteractive; \
     fi;
 
 #php-phalcon
-RUN if [ $PHP_VERSION \> 7 ]; then \
-        echo 'deb https://packagecloud.io/phalcon/stable/ubuntu/ bionic main' > /etc/apt/sources.list.d/phalcon_stable.list; \
-        echo 'deb-src https://packagecloud.io/phalcon/stable/ubuntu/ bionic main' >> /etc/apt/sources.list.d/phalcon_stable.list; \
-        wget -qO- 'https://packagecloud.io/phalcon/stable/gpgkey' | apt-key add -; \
-        apt-get update; \
-        if [ $PHP_VERSION \< 7.4 ]; then \
-            apt-get install -yq php$PHP_VERSION-phalcon=$PHALCON_VERSION+php$PHP_VERSION; \
-        fi; \
-        if [ $PHP_VERSION \> 7.3 ] && [ $PHP_VERSION \< 8 ]; then \
-            apt-get install -yq php$PHP_VERSION-phalcon php-psr; \
-        fi; \
-    fi;
+#RUN if [ $PHP_VERSION \> 7 ]; then \
+#        echo 'deb https://packagecloud.io/phalcon/stable/ubuntu/ bionic main' > /etc/apt/sources.list.d/phalcon_stable.list; \
+#        echo 'deb-src https://packagecloud.io/phalcon/stable/ubuntu/ bionic main' >> /etc/apt/sources.list.d/phalcon_stable.list; \
+#        wget -qO- 'https://packagecloud.io/phalcon/stable/gpgkey' | apt-key add -; \
+#        apt-get update; \
+#        if [ $PHP_VERSION \< 7.4 ]; then \
+#            apt-get install -yq php$PHP_VERSION-phalcon=$PHALCON_VERSION+php$PHP_VERSION; \
+#        fi; \
+#        if [ $PHP_VERSION \> 7.3 ] && [ $PHP_VERSION \< 8 ]; then \
+#            apt-get install -yq php$PHP_VERSION-phalcon php-psr; \
+#        fi; \
+#    fi;
 
 #wp-cli
 RUN mkdir /opt/wp-cli && \
@@ -76,12 +76,12 @@ RUN mkdir /opt/composer; \
     )
 
 #phalcon devtools
-RUN cd /opt && ( \
-        git clone https://github.com/phalcon/phalcon-devtools.git; \
-        cd phalcon-devtools; \
-        chmod +x phalcon; \
-        ln -s /opt/phalcon-devtools/phalcon /usr/local/bin/phalcon; \
-    )
+#RUN cd /opt && ( \
+#        git clone https://github.com/phalcon/phalcon-devtools.git; \
+#        cd phalcon-devtools; \
+#        chmod +x phalcon; \
+#        ln -s /opt/phalcon-devtools/phalcon /usr/local/bin/phalcon; \
+#    )
     
 ## Install Symfony CLI
 RUN curl -sS https://get.symfony.com/cli/installer | bash
