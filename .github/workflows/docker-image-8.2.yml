@@ -3,7 +3,7 @@ name: Build Docker Image - PHP 8.2
 on: 
   workflow_dispatch:
   schedule:
-    - cron: '20 6 * * 3'
+    - cron: '15 6 * * 3'
 
 jobs:
   docker:

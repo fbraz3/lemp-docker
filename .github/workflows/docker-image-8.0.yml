@@ -1,4 +1,4 @@
-name: Build Docker Image - PHP 8.1
+name: Build Docker Image - PHP 8.0
 
 on: 
   workflow_dispatch:
@@ -31,6 +31,6 @@ jobs:
           context: .
           push: true
           build-args: |
-            PHP_VERSION=8.1
+            PHP_VERSION=8.0
           tags: |
-            fbraz3/lnmp:8.1
+            fbraz3/lnmp:8.0
