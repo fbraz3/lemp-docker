@@ -5,7 +5,10 @@ name: Build Docker Image - PHP 8.1
 #    branches:
 #      - 'main'
 
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * 1'
 
 jobs:
   docker:
