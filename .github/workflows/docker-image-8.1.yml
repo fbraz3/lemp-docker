@@ -29,10 +29,11 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
-          build-args: |
-            PHP_VERSION:8.1
+          platforms: linux/amd64,linux/arm64
           context: .
           push: true
+          build-args: |
+            PHP_VERSION=8.1
           tags: |
             fbraz3/lnmp:latest
             fbraz3/lnmp:8.1
