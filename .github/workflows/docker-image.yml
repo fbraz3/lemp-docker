@@ -1,8 +1,5 @@
 name: Build Docker Image - PHP 8.1
 
-env:
-  PHP_VERSION: 8.1
-
 #on:
 #  push:
 #    branches:
@@ -33,7 +30,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           build-args: |
-            PHP_VERSION:$PHP_VERSION
+            PHP_VERSION:8.1
           context: .
           push: true
           tags: |
