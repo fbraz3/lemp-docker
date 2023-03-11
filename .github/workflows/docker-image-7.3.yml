@@ -34,3 +34,4 @@ jobs:
             PHP_VERSION=7.3
           tags: |
             fbraz3/lnmp:7.3
+            fbraz3/lemp:7.3

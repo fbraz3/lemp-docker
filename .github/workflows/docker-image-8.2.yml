@@ -34,4 +34,6 @@ jobs:
             PHP_VERSION=8.2
           tags: |
             fbraz3/lnmp:latest
+            fbraz3/lemp:latest
             fbraz3/lnmp:8.2
+            fbraz3/lemp:8.2

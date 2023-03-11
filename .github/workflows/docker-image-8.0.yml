@@ -34,3 +34,4 @@ jobs:
             PHP_VERSION=8.0
           tags: |
             fbraz3/lnmp:8.0
+            fbraz3/lnmp:8.0
