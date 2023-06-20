@@ -1,6 +1,6 @@
-FROM ubuntu:18.04
+FROM ubuntu:22.04
 
-ARG PHP_VERSION=7.3
+ARG PHP_VERSION=8.2
 ARG PHALCON_VERSION="3.4.5-1"
 ARG PHPMYADMIN=4.8.5
 
@@ -42,9 +42,9 @@ RUN export DEBIAN_FRONTEND=noninteractive; \
     php$PHP_VERSION-xmlrpc php$PHP_VERSION-zip php$PHP_VERSION-odbc php$PHP_VERSION-snmp \
     php$PHP_VERSION-interbase php$PHP_VERSION-ldap php$PHP_VERSION-tidy \
     php$PHP_VERSION-memcached php-tcpdf php$PHP_VERSION-redis php$PHP_VERSION-imagick php$PHP_VERSION-mongodb; \
-#    if [ $PHP_VERSION \< 8 ]; then \
-#      apt-get install -yq php$PHP_VERSION-json; \
-#    fi;
+    if [ $PHP_VERSION \< 8 ]; then \
+      apt-get install -yq php$PHP_VERSION-json; \
+    fi;
 
 #php-phalcon
 #RUN if [ $PHP_VERSION \> 7 ]; then \
