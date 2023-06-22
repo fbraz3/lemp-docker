@@ -1,6 +1,6 @@
 FROM ubuntu:22.04
 
-ARG PHP_VERSION=8.2
+ARG PHP_VERSION=7.2
 ARG PHALCON_VERSION="3.4.5-1"
 ARG PHPMYADMIN=4.8.5
 
@@ -44,6 +44,9 @@ RUN export DEBIAN_FRONTEND=noninteractive; \
     php$PHP_VERSION-memcached php-tcpdf php$PHP_VERSION-redis php$PHP_VERSION-imagick php$PHP_VERSION-mongodb; \
     if [ $PHP_VERSION \< 8 ]; then \
       apt-get install -yq php$PHP_VERSION-json; \
+    fi;  \
+    if [ $PHP_VERSION != 8.2 ]; then \
+      apt remove -fyq php8.2*; apt -fyq autoremove; \
     fi;
 
 #php-phalcon
