@@ -2,7 +2,8 @@ FROM ubuntu:22.04
 
 ARG PHP_VERSION=8.2
 ARG PHALCON_VERSION="3.4.5-1"
-ARG PHPMYADMIN=4.8.5
+ARG PHPMYADMIN_OLD=4.8.5
+ARG PHPMYADMIN=5.2.1
 
 COPY ./scripts/autoclean.sh /root/
 COPY ./scripts/docker-entrypoint.sh ./misc/cronfile.final ./misc/cronfile.system ./scripts/build.sql /
@@ -23,6 +24,9 @@ RUN apt-get install -y nginx;
 
 #oh maria!
 RUN export DEBIAN_FRONTEND=noninteractive; apt-get install -yq mariadb-server mariadb-client; \
+    if [ $PHP_VERSION \< 8 ]; then \
+         PHPMYADMIN="${PHPMYADMIN_OLD}"; \
+    fi; \
     cd /var/www/html && ( \
       wget -q https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN/phpMyAdmin-$PHPMYADMIN-all-languages.zip; \
       unzip -oq phpMyAdmin-$PHPMYADMIN-all-languages.zip; \
