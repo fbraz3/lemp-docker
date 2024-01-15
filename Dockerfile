@@ -1,5 +1,6 @@
 FROM ubuntu:22.04
 
+ARG TARGETPLATFORM
 ARG PHP_VERSION=8.2
 ARG PHALCON_VERSION="3.4.5-1"
 ARG PHPMYADMIN_OLD=4.8.5
@@ -91,8 +92,11 @@ RUN mkdir /opt/composer; \
 #    )
     
 ## Install Symfony CLI
-RUN curl -sS https://get.symfony.com/cli/installer | bash
-RUN mv $HOME/.symfony5/bin/symfony /usr/local/bin/symfony
+RUN if [ "$TARGETPLATFORM" != "linux/arm/v7" ]; then \
+        curl -sS https://get.symfony.com/cli/installer | bash; \
+        mv $HOME/.symfony5/bin/symfony /usr/local/bin/symfony; \
+    fi;
+
 
 COPY ./conf/ssmtp.conf.template /etc/ssmtp/
 COPY ./monit/monitrc /etc/monit/
