@@ -46,12 +46,15 @@ RUN export DEBIAN_FRONTEND=noninteractive; \
     php$PHP_VERSION-mbstring php$PHP_VERSION-pgsql php$PHP_VERSION-sqlite3 \
     php$PHP_VERSION-xmlrpc php$PHP_VERSION-zip php$PHP_VERSION-odbc php$PHP_VERSION-snmp \
     php$PHP_VERSION-interbase php$PHP_VERSION-ldap php$PHP_VERSION-tidy \
-    php$PHP_VERSION-memcached php-tcpdf php$PHP_VERSION-redis php$PHP_VERSION-imagick php$PHP_VERSION-mongodb; \
+    php$PHP_VERSION-memcached php$PHP_VERSION-redis php$PHP_VERSION-imagick php$PHP_VERSION-mongodb; \
     if [ $PHP_VERSION \< 8 ]; then \
       apt-get install -yq php$PHP_VERSION-json; \
     fi;  \
     if [ $PHP_VERSION != 8.2 ]; then \
       apt remove -fyq php8.2*; apt -fyq autoremove; \
+    fi; \
+    if [ $PHP_VERSION != 8.3 ]; then \
+      apt remove -fyq php8.3*; apt -fyq autoremove; \
     fi;
 
 #php-phalcon
