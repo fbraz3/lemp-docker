@@ -100,6 +100,8 @@ RUN if [ "$TARGETPLATFORM" != "linux/arm/v7" ]; then \
         mv $HOME/.symfony5/bin/symfony /usr/local/bin/symfony; \
     fi;
 
+# Ensure PHP version is the correct one
+RUN if [ $PHP_VERSION != $(php -v |head -n1 | awk '{print $2}' | awk -F'.' '{print $1"."$2}') ]; then exit 1; fi
 
 COPY ./conf/ssmtp.conf.template /etc/ssmtp/
 COPY ./monit/monitrc /etc/monit/
