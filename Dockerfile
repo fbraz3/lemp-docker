@@ -18,8 +18,8 @@ RUN echo $PHP_VERSION > /PHP_VERSION; \
     apt-get update;
 
 RUN export DEBIAN_FRONTEND=noninteractive; apt-get install -yq software-properties-common apt-transport-https \
-    cron vim ssmtp monit wget unzip curl less git; \
-    /usr/bin/unattended-upgrades -v;
+    cron vim ssmtp monit wget unzip curl less git;
+#    /usr/bin/unattended-upgrades -v;
 
 RUN apt-get install -y nginx;
 
