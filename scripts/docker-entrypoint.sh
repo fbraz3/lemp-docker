@@ -74,6 +74,14 @@ for i in `/usr/bin/env`; do
         continue
     fi
 
+    if [[ "$PARAM" == "" ]]; then
+        continue
+    fi
+
+    if [[ "$VAL" == "" ]]; then
+        continue
+    fi
+
     if [[ $PARAM =~ ^PHPADMIN_.+ ]]; then
         PHPPARAM=`echo $PARAM |sed 's/PHPADMIN_//g' | sed 's/__/./g' | awk '{print tolower($0)}'`
         echo "PHPADMIN   :: $PHPPARAM => $VAL"
@@ -99,6 +107,9 @@ for i in `/usr/bin/env`; do
         echo "env[$PARAM]=\"$VAL\"" >> /etc/php/$PHPVERSION/fpm/env.conf
     fi
 done
+
+#Allow mysql paswordless connection
+sudo sed -i '/\[mysqld\]/a skip-grant-tables' /etc/mysql/mariadb.conf.d/50-server.cnf
 
 # START SERVICES
 /etc/init.d/cron restart
