@@ -26,13 +26,14 @@ Note: If you are using **zend framework** 1 or 2, just modify **docker-compose.y
 
 ### The **docker-compose.yml** file
 ```yml
-web:
- image: fbraz3/lnmp
- volumes:
- - ./:/app/public/
- ports:
- - "127.0.0.1:80:80"
- - "127.0.0.1:3306:3306"
+services:
+  web:
+   image: fbraz3/lnmp
+   volumes:
+   - ./:/app/public/
+   ports:
+   - "127.0.0.1:80:80"
+   - "127.0.0.1:3306:3306"
 ```
 
 ## Sending Emails
