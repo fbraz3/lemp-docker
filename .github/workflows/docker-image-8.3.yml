@@ -44,5 +44,5 @@ jobs:
             fbraz3/lemp:${{ matrix.php_version }}-${{ matrix.architecture }}
             ${{ matrix.php_version == '8.3' && 'fbraz3/lnmp:latest' || '' }}
             ${{ matrix.php_version == '8.3' && 'fbraz3/lemp:latest' || '' }}
-            ${{ matrix.php_version == '8.3' && 'fbraz3/lnmp:latest-' + matrix.architecture || '' }}
-            ${{ matrix.php_version == '8.3' && 'fbraz3/lemp:latest-' + matrix.architecture || '' }}
+            ${{ matrix.php_version == '8.3' && format('fbraz3/lnmp:latest-{0}', matrix.architecture) || '' }}
+            ${{ matrix.php_version == '8.3' && format('fbraz3/lemp:latest-{0}', matrix.architecture) || '' }}
