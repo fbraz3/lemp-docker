@@ -11,64 +11,64 @@ jobs:
     strategy:
       matrix:
         include:
-          - php_version: 8.3
+          - php_version: '8.3'
             architecture: linux/amd64
             is_latest: true
-          - php_version: 8.3
+          - php_version: '8.3'
             architecture: linux/arm64
             is_latest: false
-          - php_version: 8.2
+          - php_version: '8.2'
             architecture: linux/amd64
             is_latest: false
-          - php_version: 8.2
+          - php_version: '8.2'
             architecture: linux/arm64
             is_latest: false
-          - php_version: 8.1
+          - php_version: '8.1'
             architecture: linux/amd64
             is_latest: false
-          - php_version: 8.1
+          - php_version: '8.1'
             architecture: linux/arm64
             is_latest: false
-          - php_version: 8.0
+          - php_version: '8.0'
             architecture: linux/amd64
             is_latest: false
-          - php_version: 8.0
+          - php_version: '8.0'
             architecture: linux/arm64
             is_latest: false
-          - php_version: 7.4
+          - php_version: '7.4'
             architecture: linux/amd64
             is_latest: false
-          - php_version: 7.4
+          - php_version: '7.4'
             architecture: linux/arm64
             is_latest: false
-          - php_version: 7.3
+          - php_version: '7.3'
             architecture: linux/amd64
             is_latest: false
-          - php_version: 7.3
+          - php_version: '7.3'
             architecture: linux/arm64
             is_latest: false
-          - php_version: 7.2
+          - php_version: '7.2'
             architecture: linux/amd64
             is_latest: false
-          - php_version: 7.2
+          - php_version: '7.2'
             architecture: linux/arm64
             is_latest: false
-          - php_version: 7.1
+          - php_version: '7.1'
             architecture: linux/amd64
             is_latest: false
-          - php_version: 7.1
+          - php_version: '7.1'
             architecture: linux/arm64
             is_latest: false
-          - php_version: 7.0
+          - php_version: '7.0'
             architecture: linux/amd64
             is_latest: false
-          - php_version: 7.0
+          - php_version: '7.0'
             architecture: linux/arm64
             is_latest: false
-          - php_version: 5.6
+          - php_version: '5.6'
             architecture: linux/amd64
             is_latest: false
-          - php_version: 5.6
+          - php_version: '5.6'
             architecture: linux/arm64
             is_latest: false
 
