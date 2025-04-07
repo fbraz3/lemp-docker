@@ -40,9 +40,9 @@ jobs:
           tags: |
             fbraz3/lnmp:${{ matrix.php_version }}
             fbraz3/lemp:${{ matrix.php_version }}
-            fbraz3/lnmp:${{ matrix.php_version }}-${{ matrix.architecture }}
-            fbraz3/lemp:${{ matrix.php_version }}-${{ matrix.architecture }}
+            fbraz3/lnmp:${{ matrix.php_version }}-${{ matrix.architecture | replace('linux/', '') }}
+            fbraz3/lemp:${{ matrix.php_version }}-${{ matrix.architecture | replace('linux/', '') }}
             ${{ matrix.php_version == '8.3' && 'fbraz3/lnmp:latest' || '' }}
             ${{ matrix.php_version == '8.3' && 'fbraz3/lemp:latest' || '' }}
-            ${{ matrix.php_version == '8.3' && format('fbraz3/lnmp:latest-{0}', matrix.architecture) || '' }}
-            ${{ matrix.php_version == '8.3' && format('fbraz3/lemp:latest-{0}', matrix.architecture) || '' }}
+            ${{ matrix.php_version == '8.3' && format('fbraz3/lnmp:latest-{0}-{1}', 'latest', matrix.architecture | replace('linux/', '')) || '' }}
+            ${{ matrix.php_version == '8.3' && format('fbraz3/lemp:latest-{0}-{1}', 'latest', matrix.architecture | replace('linux/', '')) || '' }}
