@@ -109,7 +109,7 @@ for i in `/usr/bin/env`; do
 done
 
 #Allow mysql paswordless connection
-sudo sed -i '/\[mysqld\]/a skip-grant-tables' /etc/mysql/mariadb.conf.d/50-server.cnf
+sed -i '/\[mysqld\]/a skip-grant-tables' /etc/mysql/mariadb.conf.d/50-server.cnf
 
 # START SERVICES
 /etc/init.d/cron restart
