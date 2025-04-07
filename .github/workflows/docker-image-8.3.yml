@@ -24,10 +24,24 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push
+      - name: Build and push (X86)
         uses: docker/build-push-action@v6
         with:
           platforms: linux/amd64
+          context: .
+          push: true
+          build-args: |
+            PHP_VERSION=8.3
+          tags: |
+            fbraz3/lnmp:latest
+            fbraz3/lemp:latest
+            fbraz3/lnmp:8.3
+            fbraz3/lemp:8.3
+
+      - name: Build and push (ARM64)
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/arm64
           context: .
           push: true
           build-args: |
