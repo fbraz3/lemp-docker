@@ -1,0 +1,113 @@
+name: Build Docker Image - PHP
+
+on:
+  workflow_dispatch:
+#  schedule:
+#    - cron: '10 10 * * 3'
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - php_version: 8.3
+            architecture: linux/amd64
+            is_latest: true
+          - php_version: 8.3
+            architecture: linux/arm64
+            is_latest: false
+          - php_version: 8.2
+            architecture: linux/amd64
+            is_latest: false
+          - php_version: 8.2
+            architecture: linux/arm64
+            is_latest: false
+          - php_version: 8.1
+            architecture: linux/amd64
+            is_latest: false
+          - php_version: 8.1
+            architecture: linux/arm64
+            is_latest: false
+          - php_version: 8.0
+            architecture: linux/amd64
+            is_latest: false
+          - php_version: 8.0
+            architecture: linux/arm64
+            is_latest: false
+          - php_version: 7.4
+            architecture: linux/amd64
+            is_latest: false
+          - php_version: 7.4
+            architecture: linux/arm64
+            is_latest: false
+          - php_version: 7.3
+            architecture: linux/amd64
+            is_latest: false
+          - php_version: 7.3
+            architecture: linux/arm64
+            is_latest: false
+          - php_version: 7.2
+            architecture: linux/amd64
+            is_latest: false
+          - php_version: 7.2
+            architecture: linux/arm64
+            is_latest: false
+          - php_version: 7.1
+            architecture: linux/amd64
+            is_latest: false
+          - php_version: 7.1
+            architecture: linux/arm64
+            is_latest: false
+          - php_version: 7.0
+            architecture: linux/amd64
+            is_latest: false
+          - php_version: 7.0
+            architecture: linux/arm64
+            is_latest: false
+          - php_version: 5.6
+            architecture: linux/amd64
+            is_latest: false
+          - php_version: 5.6
+            architecture: linux/arm64
+            is_latest: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Prepare architecture name
+        id: prep
+        run: echo "arch_short=${ARCH##*/}" >> $GITHUB_OUTPUT
+        env:
+          ARCH: ${{ matrix.architecture }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          platforms: ${{ matrix.architecture }}
+          context: .
+          push: true
+          build-args: |
+            PHP_VERSION=${{ matrix.php_version }}
+          tags: |
+            fbraz3/lnmp:${{ matrix.php_version }}
+            fbraz3/lemp:${{ matrix.php_version }}
+            fbraz3/lnmp:${{ matrix.php_version }}-${{ steps.prep.outputs.arch_short }}
+            fbraz3/lemp:${{ matrix.php_version }}-${{ steps.prep.outputs.arch_short }}
+            ${{ matrix.is_latest && 'fbraz3/lnmp:latest' || '' }}
+            ${{ matrix.is_latest && 'fbraz3/lemp:latest' || '' }}
+            ${{ matrix.is_latest && format('fbraz3/lnmp:latest-{0}', steps.prep.outputs.arch_short) || '' }}
+            ${{ matrix.is_latest && format('fbraz3/lemp:latest-{0}', steps.prep.outputs.arch_short) || '' }}
