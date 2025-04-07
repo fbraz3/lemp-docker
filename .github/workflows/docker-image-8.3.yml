@@ -29,6 +29,12 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Prepare architecture name
+        id: prep
+        run: echo "arch_short=${ARCH##*/}" >> $GITHUB_OUTPUT
+        env:
+          ARCH: ${{ matrix.architecture }}
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
@@ -40,9 +46,9 @@ jobs:
           tags: |
             fbraz3/lnmp:${{ matrix.php_version }}
             fbraz3/lemp:${{ matrix.php_version }}
-            fbraz3/lnmp:${{ matrix.php_version }}-${{ matrix.architecture | replace('linux/', '') }}
-            fbraz3/lemp:${{ matrix.php_version }}-${{ matrix.architecture | replace('linux/', '') }}
+            fbraz3/lnmp:${{ matrix.php_version }}-${{ steps.prep.outputs.arch_short }}
+            fbraz3/lemp:${{ matrix.php_version }}-${{ steps.prep.outputs.arch_short }}
             ${{ matrix.php_version == '8.3' && 'fbraz3/lnmp:latest' || '' }}
             ${{ matrix.php_version == '8.3' && 'fbraz3/lemp:latest' || '' }}
-            ${{ matrix.php_version == '8.3' && format('fbraz3/lnmp:latest-{0}-{1}', 'latest', matrix.architecture | replace('linux/', '')) || '' }}
-            ${{ matrix.php_version == '8.3' && format('fbraz3/lemp:latest-{0}-{1}', 'latest', matrix.architecture | replace('linux/', '')) || '' }}
+            ${{ matrix.php_version == '8.3' && format('fbraz3/lnmp:latest-{0}', steps.prep.outputs.arch_short) || '' }}
+            ${{ matrix.php_version == '8.3' && format('fbraz3/lemp:latest-{0}', steps.prep.outputs.arch_short) || '' }}
