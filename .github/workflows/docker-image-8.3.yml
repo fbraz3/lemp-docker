@@ -1,6 +1,6 @@
 name: Build Docker Image - PHP 8.3
 
-on: 
+on:
   workflow_dispatch:
   schedule:
     - cron: '10 10 * * 3'
@@ -8,6 +8,11 @@ on:
 jobs:
   docker:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        architecture: [linux/amd64, linux/arm64]
+        php_version: [8.3]
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -24,30 +29,20 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push (X86)
+      - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          platforms: linux/amd64
+          platforms: ${{ matrix.architecture }}
           context: .
           push: true
           build-args: |
-            PHP_VERSION=8.3
+            PHP_VERSION=${{ matrix.php_version }}
           tags: |
-            fbraz3/lnmp:latest
-            fbraz3/lemp:latest
-            fbraz3/lnmp:8.3
-            fbraz3/lemp:8.3
-
-      - name: Build and push (ARM64)
-        uses: docker/build-push-action@v6
-        with:
-          platforms: linux/arm64
-          context: .
-          push: true
-          build-args: |
-            PHP_VERSION=8.3
-          tags: |
-            fbraz3/lnmp:latest
-            fbraz3/lemp:latest
-            fbraz3/lnmp:8.3
-            fbraz3/lemp:8.3
+            fbraz3/lnmp:${{ matrix.php_version }}
+            fbraz3/lemp:${{ matrix.php_version }}
+            fbraz3/lnmp:${{ matrix.php_version }}-${{ matrix.architecture }}
+            fbraz3/lemp:${{ matrix.php_version }}-${{ matrix.architecture }}
+            ${{ matrix.php_version == '8.3' && 'fbraz3/lnmp:latest' || '' }}
+            ${{ matrix.php_version == '8.3' && 'fbraz3/lemp:latest' || '' }}
+            ${{ matrix.php_version == '8.3' && 'fbraz3/lnmp:latest-' + matrix.architecture || '' }}
+            ${{ matrix.php_version == '8.3' && 'fbraz3/lemp:latest-' + matrix.architecture || '' }}
