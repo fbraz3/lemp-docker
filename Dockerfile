@@ -1,4 +1,4 @@
-FROM php:8.2-cli as php-tools
+FROM php:8.2-cli AS php-tools
 
 RUN apt-get update && apt-get install -y curl unzip wget git \
  && mkdir -p /opt/tools
@@ -29,24 +29,17 @@ ARG PHPMYADMIN=5.2.2
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-COPY ./scripts/autoclean.sh /root/
 COPY ./scripts/docker-entrypoint.sh ./misc/cronfile.final ./misc/cronfile.system ./scripts/build.sql /
 
 RUN echo $PHP_VERSION > /PHP_VERSION; \
-    chmod +x /root/autoclean.sh; \
     chmod +x /docker-entrypoint.sh; \
     mkdir /app; \
     mkdir /run/php/; \
     mkdir -p /app/public; \
     apt-get update;
 
-#RUN export DEBIAN_FRONTEND=noninteractive; apt-get install -yq software-properties-common apt-transport-https \
-#    cron vim ssmtp monit wget unzip curl less git; \
-#    /usr/bin/unattended-upgrades -v;
-
 RUN apt-get install -yq software-properties-common \
     apt-transport-https cron vim ssmtp monit wget unzip curl less git
-    
 
 RUN apt-get install -y nginx;
 
@@ -64,8 +57,8 @@ RUN apt-get install -yq mariadb-server mariadb-client; \
     );
 
 #php-base
-RUN add-apt-repository -y ppa:ondrej/php;
-RUN apt-get install -yq php$PHP_VERSION php$PHP_VERSION-cli \
+RUN add-apt-repository -y ppa:ondrej/php; \
+    apt-get install -yq php$PHP_VERSION php$PHP_VERSION-cli \
     php$PHP_VERSION-common php$PHP_VERSION-curl php$PHP_VERSION-fpm \
     php$PHP_VERSION-mysql php$PHP_VERSION-opcache php$PHP_VERSION-readline \
     php$PHP_VERSION-xml php$PHP_VERSION-xsl php$PHP_VERSION-gd php$PHP_VERSION-intl \
@@ -74,6 +67,7 @@ RUN apt-get install -yq php$PHP_VERSION php$PHP_VERSION-cli \
     php$PHP_VERSION-xmlrpc php$PHP_VERSION-zip php$PHP_VERSION-odbc php$PHP_VERSION-snmp \
     php$PHP_VERSION-interbase php$PHP_VERSION-ldap php$PHP_VERSION-tidy \
     php$PHP_VERSION-memcached php$PHP_VERSION-redis php$PHP_VERSION-imagick php$PHP_VERSION-mongodb; \
+    php$PHP_VERSION-phalcon; \
     if [ $PHP_VERSION \< 8 ]; then \
       apt-get install -yq php$PHP_VERSION-json; \
     fi;  \
@@ -82,21 +76,10 @@ RUN apt-get install -yq php$PHP_VERSION php$PHP_VERSION-cli \
     fi; \
     if [ $PHP_VERSION != 8.3 ]; then \
       apt remove -fyq php8.3*; apt -fyq autoremove; \
+    fi; \
+    if [ $PHP_VERSION != 8.4 ]; then \
+      apt remove -fyq php8.4*; apt -fyq autoremove; \
     fi;
-
-#php-phalcon
-#RUN if [ $PHP_VERSION \> 7 ]; then \
-#        echo 'deb https://packagecloud.io/phalcon/stable/ubuntu/ bionic main' > /etc/apt/sources.list.d/phalcon_stable.list; \
-#        echo 'deb-src https://packagecloud.io/phalcon/stable/ubuntu/ bionic main' >> /etc/apt/sources.list.d/phalcon_stable.list; \
-#        wget -qO- 'https://packagecloud.io/phalcon/stable/gpgkey' | apt-key add -; \
-#        apt-get update; \
-#        if [ $PHP_VERSION \< 7.4 ]; then \
-#            apt-get install -yq php$PHP_VERSION-phalcon=$PHALCON_VERSION+php$PHP_VERSION; \
-#        fi; \
-#        if [ $PHP_VERSION \> 7.3 ] && [ $PHP_VERSION \< 8 ]; then \
-#            apt-get install -yq php$PHP_VERSION-phalcon php-psr; \
-#        fi; \
-#    fi;
 
 # Copy Tools
 COPY --from=php-tools /usr/local/bin/composer /usr/local/bin/composer
