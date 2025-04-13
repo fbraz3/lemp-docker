@@ -1,10 +1,33 @@
+FROM php:8.2-cli as php-tools
+
+RUN apt-get update && apt-get install -y curl unzip wget git \
+ && mkdir -p /opt/tools
+
+# Composer
+RUN curl -sS https://getcomposer.org/installer | php && \
+    mv composer.phar /opt/tools/composer && \
+    ln -s /opt/tools/composer /usr/local/bin/composer
+
+# WP-CLI
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+    chmod +x wp-cli.phar && mv wp-cli.phar /opt/tools/wp && \
+    ln -s /opt/tools/wp /usr/local/bin/wp
+
+# Symfony CLI
+RUN curl -sS https://get.symfony.com/cli/installer | bash && \
+    mv $HOME/.symfony*/bin/symfony /opt/tools/symfony && \
+    ln -s /opt/tools/symfony /usr/local/bin/symfony
+
+
 FROM ubuntu:22.04
 
 ARG TARGETPLATFORM
-ARG PHP_VERSION=8.2
+ARG PHP_VERSION=8.4
 ARG PHALCON_VERSION="3.4.5-1"
 ARG PHPMYADMIN_OLD=4.8.5
 ARG PHPMYADMIN=5.2.2
+
+ENV DEBIAN_FRONTEND=noninteractive
 
 COPY ./scripts/autoclean.sh /root/
 COPY ./scripts/docker-entrypoint.sh ./misc/cronfile.final ./misc/cronfile.system ./scripts/build.sql /
@@ -21,14 +44,14 @@ RUN echo $PHP_VERSION > /PHP_VERSION; \
 #    cron vim ssmtp monit wget unzip curl less git; \
 #    /usr/bin/unattended-upgrades -v;
 
-RUN export DEBIAN_FRONTEND=noninteractive; apt-get install -yq software-properties-common \
+RUN apt-get install -yq software-properties-common \
     apt-transport-https cron vim ssmtp monit wget unzip curl less git
     
 
 RUN apt-get install -y nginx;
 
 #oh maria!
-RUN export DEBIAN_FRONTEND=noninteractive; apt-get install -yq mariadb-server mariadb-client; \
+RUN apt-get install -yq mariadb-server mariadb-client; \
     if [ $PHP_VERSION \< 8 ]; then \
          PHPMYADMIN="${PHPMYADMIN_OLD}"; \
     fi; \
@@ -42,8 +65,7 @@ RUN export DEBIAN_FRONTEND=noninteractive; apt-get install -yq mariadb-server ma
 
 #php-base
 RUN add-apt-repository -y ppa:ondrej/php;
-RUN export DEBIAN_FRONTEND=noninteractive; \
-    apt-get install -yq php$PHP_VERSION php$PHP_VERSION-cli \
+RUN apt-get install -yq php$PHP_VERSION php$PHP_VERSION-cli \
     php$PHP_VERSION-common php$PHP_VERSION-curl php$PHP_VERSION-fpm \
     php$PHP_VERSION-mysql php$PHP_VERSION-opcache php$PHP_VERSION-readline \
     php$PHP_VERSION-xml php$PHP_VERSION-xsl php$PHP_VERSION-gd php$PHP_VERSION-intl \
@@ -76,34 +98,10 @@ RUN export DEBIAN_FRONTEND=noninteractive; \
 #        fi; \
 #    fi;
 
-#wp-cli
-RUN mkdir /opt/wp-cli && \
-    cd /opt/wp-cli && ( \
-        wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
-        chmod +x /opt/wp-cli/wp-cli.phar; \
-        ln -s /opt/wp-cli/wp-cli.phar /usr/local/bin/wp; \
-    )
-
-#let`s compose!
-RUN mkdir /opt/composer; \
-    cd /opt/composer && ( \
-        wget https://raw.githubusercontent.com/composer/getcomposer.org/master/web/installer -O - -q | php -- --quiet; \
-        ln -s /opt/composer/composer.phar /usr/local/bin/composer; \
-    )
-
-#phalcon devtools
-#RUN cd /opt && ( \
-#        git clone https://github.com/phalcon/phalcon-devtools.git; \
-#        cd phalcon-devtools; \
-#        chmod +x phalcon; \
-#        ln -s /opt/phalcon-devtools/phalcon /usr/local/bin/phalcon; \
-#    )
-    
-## Install Symfony CLI
-RUN if [ "$TARGETPLATFORM" != "linux/arm/v7" ]; then \
-        curl -sS https://get.symfony.com/cli/installer | bash; \
-        mv $HOME/.symfony5/bin/symfony /usr/local/bin/symfony; \
-    fi;
+# Copy Tools
+COPY --from=php-tools /usr/local/bin/composer /usr/local/bin/composer
+COPY --from=php-tools /usr/local/bin/wp /usr/local/bin/wp
+COPY --from=php-tools /usr/local/bin/symfony /usr/local/bin/symfony
 
 # Ensure PHP version is the correct one
 RUN if [ $PHP_VERSION != $(php -v |head -n1 | awk '{print $2}' | awk -F'.' '{print $1"."$2}') ]; then exit 1; fi
