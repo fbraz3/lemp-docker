@@ -66,25 +66,24 @@ RUN add-apt-repository -y ppa:ondrej/php; \
     php$PHP_VERSION-mbstring php$PHP_VERSION-pgsql php$PHP_VERSION-sqlite3 \
     php$PHP_VERSION-xmlrpc php$PHP_VERSION-zip php$PHP_VERSION-odbc php$PHP_VERSION-snmp \
     php$PHP_VERSION-interbase php$PHP_VERSION-ldap php$PHP_VERSION-tidy \
-    php$PHP_VERSION-memcached php$PHP_VERSION-redis php$PHP_VERSION-imagick php$PHP_VERSION-mongodb; \
-    php$PHP_VERSION-phalcon; \
-    if [ $PHP_VERSION \< 8 ]; then \
-      apt-get install -yq php$PHP_VERSION-json; \
-    fi;  \
-    if [ $PHP_VERSION != 8.2 ]; then \
-      apt remove -fyq php8.2*; apt -fyq autoremove; \
+    php$PHP_VERSION-memcached php$PHP_VERSION-redis php$PHP_VERSION-imagick php$PHP_VERSION-mongodb;
+
+RUN if dpkg --compare-versions "${PHP_VERSION}" gt "7.1" && dpkg --compare-versions "${PHP_VERSION}" lt "8.0"; then \
+      apt-get install -y "php${PHP_VERSION}-phalcon4"; \
+    else \
+      apt-get install -y "php${PHP_VERSION}-phalcon"; \
     fi; \
-    if [ $PHP_VERSION != 8.3 ]; then \
-      apt remove -fyq php8.3*; apt -fyq autoremove; \
-    fi; \
-    if [ $PHP_VERSION != 8.4 ]; then \
-      apt remove -fyq php8.4*; apt -fyq autoremove; \
-    fi;
+    if dpkg --compare-versions "${PHP_VERSION}" eq "7.2"; then \
+      apt-get remove -y "php${PHP_VERSION}-phalcon4"; \
+      apt-get install -y "php${PHP_VERSION}-phalcon3"; \
+    fi
 
 # Copy Tools
 COPY --from=php-tools /usr/local/bin/composer /usr/local/bin/composer
 COPY --from=php-tools /usr/local/bin/wp /usr/local/bin/wp
 COPY --from=php-tools /usr/local/bin/symfony /usr/local/bin/symfony
+
+RUN update-alternatives  --set php /usr/bin/php$PHP_VERSION
 
 # Ensure PHP version is the correct one
 RUN if [ $PHP_VERSION != $(php -v |head -n1 | awk '{print $2}' | awk -F'.' '{print $1"."$2}') ]; then exit 1; fi

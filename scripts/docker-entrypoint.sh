@@ -2,9 +2,6 @@
 
 $(which chmod) 700 /etc/monit/monitrc
 
-# CLEAR TMP FILES
-/root/autoclean.sh
-
 # ADD CRON
 CRONFILE="/cronfile.final"
 SYSTEMCRON="/cronfile.system"

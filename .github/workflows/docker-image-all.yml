@@ -45,18 +45,63 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      # BUILD AMD64 IMAGE
+      - name: Build and push lemp image - amd64
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64
+          context: .
+          file: flavors/vanilla/Dockerfile
+          load: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+              PHP_VERSION=${{ matrix.php_version }}
+          tags: |
+              fbraz3/lnmp:${{ matrix.php_version }}-amd64
+
+      # RESERVED FOR FUTURE TESTING
+      # create info.php file
+      # run image on daemon mode, name container as lnmp-amd64, bind 80 port to 8080, map info.php to /app/public
+      # sleep a little bit to allow the image to start
+      # test php version
+      # test daemons: nginx, php-fpm, mariaDB
+      # test nginx: http://localhost:8080
+      # test php-fpm: http://localhost:8080/info.php
+      # run "show databases" command against mariadb server
+
+      # BUILD ARM64 IMAGE
+      - name: Build and push lemp image - arm64
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/arm64
+          context: .
+          file: flavors/vanilla/Dockerfile
+          load: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+              PHP_VERSION=${{ matrix.php_version }}
+          tags: |
+              fbraz3/lnmp:${{ matrix.php_version }}-arm64
+
+      # RESERVED FOR FUTURE TESTING
+      # same as amd64 tests
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Build and push lemp image
         uses: docker/build-push-action@v6
         with:
           platforms: linux/amd64,linux/arm64
           context: .
           push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           build-args: |
             PHP_VERSION=${{ matrix.php_version }}
           tags: |
