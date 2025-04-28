@@ -22,7 +22,7 @@ RUN curl -sS https://get.symfony.com/cli/installer | bash && \
 FROM ubuntu:22.04
 
 ARG TARGETPLATFORM
-ARG PHP_VERSION=8.4
+ARG PHP_VERSION=5.6
 ARG PHALCON_VERSION="3.4.5-1"
 ARG PHPMYADMIN_OLD=4.8.5
 ARG PHPMYADMIN=5.2.2

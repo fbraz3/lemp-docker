@@ -1,4 +1,4 @@
-name: Build Docker Image - PHP
+name: Build Docker Images
 
 on:
   workflow_dispatch:
@@ -13,70 +13,26 @@ jobs:
       matrix:
         include:
           - php_version: '8.4'
-            architecture: linux/amd64
-            is_latest: true
-          - php_version: '8.4'
-            architecture: linux/arm64
             is_latest: true
           - php_version: '8.3'
-            architecture: linux/amd64
-            is_latest: false
-          - php_version: '8.3'
-            architecture: linux/arm64
             is_latest: false
           - php_version: '8.2'
-            architecture: linux/amd64
-            is_latest: false
-          - php_version: '8.2'
-            architecture: linux/arm64
             is_latest: false
           - php_version: '8.1'
-            architecture: linux/amd64
-            is_latest: false
-          - php_version: '8.1'
-            architecture: linux/arm64
             is_latest: false
           - php_version: '8.0'
-            architecture: linux/amd64
-            is_latest: false
-          - php_version: '8.0'
-            architecture: linux/arm64
             is_latest: false
           - php_version: '7.4'
-            architecture: linux/amd64
-            is_latest: false
-          - php_version: '7.4'
-            architecture: linux/arm64
             is_latest: false
           - php_version: '7.3'
-            architecture: linux/amd64
-            is_latest: false
-          - php_version: '7.3'
-            architecture: linux/arm64
             is_latest: false
           - php_version: '7.2'
-            architecture: linux/amd64
-            is_latest: false
-          - php_version: '7.2'
-            architecture: linux/arm64
             is_latest: false
           - php_version: '7.1'
-            architecture: linux/amd64
-            is_latest: false
-          - php_version: '7.1'
-            architecture: linux/arm64
             is_latest: false
           - php_version: '7.0'
-            architecture: linux/amd64
-            is_latest: false
-          - php_version: '7.0'
-            architecture: linux/arm64
             is_latest: false
           - php_version: '5.6'
-            architecture: linux/amd64
-            is_latest: false
-          - php_version: '5.6'
-            architecture: linux/arm64
             is_latest: false
 
     steps:
@@ -95,16 +51,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Prepare architecture name
-        id: prep
-        run: echo "arch_short=${ARCH##*/}" >> $GITHUB_OUTPUT
-        env:
-          ARCH: ${{ matrix.architecture }}
-
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          platforms: ${{ matrix.architecture }}
+          platforms: linux/amd64,linux/arm64
           context: .
           push: true
           build-args: |
@@ -112,9 +62,5 @@ jobs:
           tags: |
             fbraz3/lnmp:${{ matrix.php_version }}
             fbraz3/lemp:${{ matrix.php_version }}
-            fbraz3/lnmp:${{ matrix.php_version }}-${{ steps.prep.outputs.arch_short }}
-            fbraz3/lemp:${{ matrix.php_version }}-${{ steps.prep.outputs.arch_short }}
             ${{ matrix.is_latest && 'fbraz3/lnmp:latest' || '' }}
             ${{ matrix.is_latest && 'fbraz3/lemp:latest' || '' }}
-            ${{ matrix.is_latest && format('fbraz3/lnmp:latest-{0}', steps.prep.outputs.arch_short) || '' }}
-            ${{ matrix.is_latest && format('fbraz3/lemp:latest-{0}', steps.prep.outputs.arch_short) || '' }}
