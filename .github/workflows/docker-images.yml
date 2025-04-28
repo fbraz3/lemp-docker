@@ -51,7 +51,6 @@ jobs:
         with:
           platforms: linux/amd64
           context: .
-          file: flavors/vanilla/Dockerfile
           load: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -76,7 +75,6 @@ jobs:
         with:
           platforms: linux/arm64
           context: .
-          file: flavors/vanilla/Dockerfile
           load: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
