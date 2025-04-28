@@ -41,7 +41,7 @@ RUN echo $PHP_VERSION > /PHP_VERSION; \
 RUN apt-get install -yq software-properties-common \
     apt-transport-https cron vim ssmtp monit wget unzip curl less git
 
-RUN apt-get install -y nginx;
+RUN sleep $((RANDOM % 120)); apt-get install -y nginx;
 
 #oh maria!
 RUN apt-get install -yq mariadb-server mariadb-client; \
