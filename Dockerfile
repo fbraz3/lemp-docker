@@ -1,33 +1,42 @@
-FROM php:8.2-cli AS php-tools
+ARG PHP_VERSION=8.2
+ARG BUILD_ARCH="amd64"
+ARG BUILD_FLAVOR=""
+FROM fbraz3/php-fpm:$PHP_VERSION$BUILD_FLAVOR
+USER root
 
-RUN apt-get update && apt-get install -y curl unzip wget git \
- && mkdir -p /opt/tools
+ARG PHP_VERSION
+ARG BUILD_ARCH
+ENV DEBIAN_FRONTEND=noninteractive
+ENV ENTRYPOINT_COMMAND="/usr/bin/tail -f /var/log/nginx/*.log"
 
-# Composer
-RUN curl -sS https://getcomposer.org/installer | php && \
-    mv composer.phar /opt/tools/composer && \
-    ln -s /opt/tools/composer /usr/local/bin/composer
-
-# WP-CLI
-RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
-    chmod +x wp-cli.phar && mv wp-cli.phar /opt/tools/wp && \
-    ln -s /opt/tools/wp /usr/local/bin/wp
-
-# Symfony CLI
-RUN curl -sS https://get.symfony.com/cli/installer | bash && \
-    mv $HOME/.symfony*/bin/symfony /opt/tools/symfony && \
-    ln -s /opt/tools/symfony /usr/local/bin/symfony
-
-
-FROM ubuntu:22.04
-
-ARG TARGETPLATFORM
-ARG PHP_VERSION=5.6
-ARG PHALCON_VERSION="3.4.5-1"
 ARG PHPMYADMIN_OLD=4.8.5
 ARG PHPMYADMIN=5.2.2
 
-ENV DEBIAN_FRONTEND=noninteractive
+# TODO list
+# Rearrange directory structure                | OK
+# filter entrypoint to mysql/pma stuff only    | OK
+# copy entrypoint to /entrypoints folder       | OK
+# refactor dockerfile to use php-fpm image     | OK
+# compile and test loccaly                     | OK
+# create dockerhub repo php-nginx              | OK
+# delcare platform image as php-nginx          | OK
+# add code of conduct and contributing.md      | OK
+# Create gh actions for build and push         | OK
+# Define tests for each flavor                 | OK
+# Implement tests for each flavor              | OK
+# refactor README.md                           | OK
+# rename github project to php-nginx           | OK
+# update remote repo name in local git         | OK
+# enable cron build                            | OK
+# merge to main branch                         | OK
+# Create deepwiki page                         | OK
+# Update readme with deepwiki link             | OK
+# Create build status badges                   | OK
+# Enable funding on github                     | OK
+# Update dockerhub image description           | OK
+
+RUN apt-get update && apt-get install -y curl unzip wget git \
+ && mkdir -p /opt/tools
 
 COPY ./scripts/docker-entrypoint.sh ./misc/cronfile.final ./misc/cronfile.system ./scripts/build.sql /
 
