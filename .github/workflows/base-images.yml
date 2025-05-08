@@ -131,7 +131,7 @@ jobs:
           build-args: |
             PHP_VERSION=${{ matrix.php_version }}
           tags: |
-            fbraz3/lnmp:${{ matrix.php_version }}`
-            fbraz3/lemp:${{ matrix.php_version }}`
-            ${{ matrix.is_latest && 'fbraz3/lnmp:latest`' || '' }}
-            ${{ matrix.is_latest && 'fbraz3/lemp:latest`' || '' }}
+            fbraz3/lnmp:${{ matrix.php_version }}
+            fbraz3/lemp:${{ matrix.php_version }}
+            ${{ matrix.is_latest && 'fbraz3/lnmp:latest' || '' }}
+            ${{ matrix.is_latest && 'fbraz3/lemp:latest' || '' }}

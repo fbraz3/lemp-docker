@@ -29,9 +29,9 @@ ARG PHPMYADMIN=5.2.2
 # remove alpha suffix from tags                | OK
 # Update readme with deepwiki link             | OK
 # Create build status badges                   | OK
-# merge to main branch                         |
+# merge to main branch                         | OK
 # triger manual builds                         |
-# Create deepwiki page                         |
+# Create deepwiki page                         | OK
 # Enable funding on github                     | OK
 # Update dockerhub images description          |
 
