@@ -19,12 +19,12 @@ ARG PHPMYADMIN=5.2.2
 # refactor dockerfile to use php-fpm image     | OK
 # compile and test loccaly                     | OK
 # add code of conduct and contributing.md      | OK
-# remove unused files                          |
+# remove unused files                          | OK
 # Create gh actions for build and push         | OK
 # Define tests for each flavor                 | OK
 # Implement tests for each flavor              | OK
 # refactor README.md                           |
-# update remote repo name in local git         |
+# add both lemp and lnmp variants              |
 # enable cron build                            |
 # remove alpha suffix from tags                |
 # merge to main branch                         |
