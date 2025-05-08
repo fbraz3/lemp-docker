@@ -2,8 +2,8 @@ name: Build Base Images
 
 on:
   workflow_dispatch:
-#  schedule:
-#    - cron: '0 6 * * 3'
+  schedule:
+    - cron: '0 6 * * 3'
 
 jobs:
   build_images:
@@ -58,17 +58,22 @@ jobs:
           build-args: |
             PHP_VERSION=${{ matrix.php_version }}
           tags: |
-            fbraz3/php-nginx:${{ matrix.php_version }}-amd64
+            fbraz3/lnmp:${{ matrix.php_version }}-amd64
 
       - name: Test images - amd64
         run: |
-          docker run --name test -v $PWD:/app/public -p 80:80 -it --rm -d --platform=linux/amd64 fbraz3/php-nginx:${{ matrix.php_version }}-amd64
-          sleep 35
-          docker exec -i test ps faux |grep -q "nginx"  || exit 1
-          docker exec -i test ps faux |grep -q "nginx: worker" || exit 1
-          curl http://127.0.0.1/ | grep -q "Hello World" || exit 1
-          docker exec -i test monit summary || exit 1
+          docker run --name test -v $PWD:/app/public -p 80:80 -p 3306:3306 -it --rm -d --platform=linux/amd64 fbraz3/lnmp:${{ matrix.php_version }}-amd64
+          sleep 60
+          echo "-----------"
+          docker logs test
           docker exec -i test ps faux
+          echo "-----------"
+          docker exec -i test ps faux |grep -q "mariadbd"  || exit 1
+          docker exec -i test mysqladmin ping || exit 1
+          telnet 127.0.0.1 3306 |grep -q Connected
+          curl http://127.0.0.1/ | grep -q "Hello World" || exit 1
+          curl http://127.0.0.1/pma/ |grep "<title>" |grep -iq phpMyAdmin || exit 1
+          docker exec -i test monit summary || exit 1
           docker stop test
         env:
           PHP_VERSION: ${{ matrix.php_version }}
@@ -86,16 +91,22 @@ jobs:
           build-args: |
             PHP_VERSION=${{ matrix.php_version }}
           tags: |
-            fbraz3/php-nginx:${{ matrix.php_version }}-arm64
+            fbraz3/lnmp:${{ matrix.php_version }}-arm64
 
       - name: Test images - arm64
         run: |
-          docker run --name test -v $PWD:/app/public -p 80:80 -it --rm -d --platform=linux/arm64 fbraz3/php-nginx:${{ matrix.php_version }}-arm64
-          sleep 35
-          docker exec -i test ps faux |grep -q "nginx"  || exit 1
-          curl http://127.0.0.1/ | grep -q "Hello World" || exit 1
-          docker exec -i test monit summary || exit 1
+          docker run --name test -v $PWD:/app/public -p 80:80 -p 3306:3306 -it --rm -d --platform=linux/arm64 fbraz3/lnmp:${{ matrix.php_version }}-arm64
+          sleep 60
+          echo "-----------"
+          docker logs test
           docker exec -i test ps faux
+          echo "-----------"
+          docker exec -i test ps faux |grep -q "mariadbd"  || exit 1
+          docker exec -i test mysqladmin ping || exit 1
+          telnet 127.0.0.1 3306 |grep -q Connected
+          curl http://127.0.0.1/ | grep -q "Hello World" || exit 1
+          curl http://127.0.0.1/pma/ |grep "<title>" |grep -iq phpMyAdmin || exit 1
+          docker exec -i test monit summary || exit 1
           docker stop test
         env:
           PHP_VERSION: ${{ matrix.php_version }}
@@ -120,7 +131,7 @@ jobs:
           build-args: |
             PHP_VERSION=${{ matrix.php_version }}
           tags: |
-            fbraz3/php-nginx:${{ matrix.php_version }}
-            fbraz3/platform:${{ matrix.php_version }}
-            ${{ matrix.is_latest && 'fbraz3/php-nginx:latest' || '' }}
-            ${{ matrix.is_latest && 'fbraz3/platform:latest' || '' }}
+            fbraz3/lnmp:${{ matrix.php_version }}`
+            fbraz3/lemp:${{ matrix.php_version }}`
+            ${{ matrix.is_latest && 'fbraz3/lnmp:latest`' || '' }}
+            ${{ matrix.is_latest && 'fbraz3/lemp:latest`' || '' }}

@@ -1,4 +1,0 @@
-#System crons
-0 2 * * * $(which apt-get) update; /usr/bin/unattended-upgrades; $(which apt-get) -fy install; $(which apt-get) -y autoremove; $(which apt-get) clean
-30 2 * * * test -f /usr/local/bin/wp && /usr/local/bin/wp --allow-root cli update
-
