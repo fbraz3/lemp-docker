@@ -12,30 +12,6 @@ ENV ENTRYPOINT_COMMAND="/usr/bin/tail -f /var/log/nginx/*.log"
 ARG PHPMYADMIN_OLD=4.8.5
 ARG PHPMYADMIN=5.2.2
 
-# TODO list
-# Rearrange directory structure                | OK
-# filter entrypoint to mysql/pma stuff only    | OK
-# copy entrypoint to /entrypoints folder       | OK
-# refactor dockerfile to use php-fpm image     | OK
-# compile and test loccaly                     | OK
-# add code of conduct and contributing.md      | OK
-# remove unused files                          | OK
-# Create gh actions for build and push         | OK
-# Define tests for each flavor                 | OK
-# Implement tests for each flavor              | OK
-# refactor README.md                           | OK
-# add both lemp and lnmp variants              | OK
-# enable cron build                            | OK
-# remove alpha suffix from tags                | OK
-# Update readme with deepwiki link             | OK
-# Create build status badges                   | OK
-# merge to main branch                         | OK
-# triger manual builds                         |
-# Create deepwiki page                         | OK
-# Enable funding on github                     | OK
-# Update dockerhub images description          |
-
-
 COPY ../../assets/scripts/docker-entrypoint.sh /entrypoints/3-mariadb-entrypoint.sh
 RUN chmod +x /entrypoints/3-mariadb-entrypoint.sh
 
