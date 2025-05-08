@@ -30,6 +30,7 @@ ARG PHPMYADMIN=5.2.2
 # Update readme with deepwiki link             | OK
 # Create build status badges                   | OK
 # merge to main branch                         |
+# triger manual builds                         |
 # Create deepwiki page                         |
 # Enable funding on github                     | OK
 # Update dockerhub images description          |
