@@ -25,14 +25,14 @@ ARG PHPMYADMIN=5.2.2
 # Implement tests for each flavor              | OK
 # refactor README.md                           | OK
 # add both lemp and lnmp variants              | OK
-# enable cron build                            |
-# remove alpha suffix from tags                |
+# enable cron build                            | OK
+# remove alpha suffix from tags                | OK
+# Update readme with deepwiki link             | OK
+# Create build status badges                   | OK
 # merge to main branch                         |
 # Create deepwiki page                         |
-# Update readme with deepwiki link             |
-# Create build status badges                   |
-# Enable funding on github                     |
-# Update dockerhub image description           |
+# Enable funding on github                     | OK
+# Update dockerhub images description          |
 
 
 COPY ../../assets/scripts/docker-entrypoint.sh /entrypoints/3-mariadb-entrypoint.sh
