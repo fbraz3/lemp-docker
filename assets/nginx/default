@@ -15,7 +15,8 @@ server {
             fastcgi_buffers 4 256k;
             fastcgi_busy_buffers_size 256k;
 
-            fastcgi_pass unix:/run/php/php%PHP_VERSION%-fpm.sock;
+            #fastcgi_pass unix:/run/php/php%PHP_VERSION%-fpm.sock;
+            fastcgi_pass 127.0.0.1:1780;
             fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
             fastcgi_param SCRIPT_NAME $fastcgi_script_name;
             include /etc/nginx/fastcgi_params;
