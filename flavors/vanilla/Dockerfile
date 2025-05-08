@@ -23,8 +23,8 @@ ARG PHPMYADMIN=5.2.2
 # Create gh actions for build and push         | OK
 # Define tests for each flavor                 | OK
 # Implement tests for each flavor              | OK
-# refactor README.md                           |
-# add both lemp and lnmp variants              |
+# refactor README.md                           | OK
+# add both lemp and lnmp variants              | OK
 # enable cron build                            |
 # remove alpha suffix from tags                |
 # merge to main branch                         |
