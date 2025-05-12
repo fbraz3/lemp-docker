@@ -6,7 +6,9 @@ It is designed to simplify the deployment of PHP applications with a robust and 
 
 The image is built on top of other modular images from the `fbraz3` ecosystem, ensuring flexibility, maintainability, and ease of use.
 
-For more technical information, please visit our  [DeepWiki Page](https://deepwiki.com/fbraz3/lemp-docker) (AI generated).
+We also provide an AI generated [DeepWiki Page](https://deepwiki.com/fbraz3/lemp-docker) with more technical information.
+
+💡 For a complete list of available images, please visit the [PHP System Docs](https://github.com/fbraz3/php-system-docs) page.
 
 ## Build Status
 
