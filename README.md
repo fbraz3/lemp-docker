@@ -10,6 +10,20 @@ We also provide an AI generated [DeepWiki Page](https://deepwiki.com/fbraz3/lemp
 
 💡 For a complete list of available images, please visit the [PHP System Docs](https://github.com/fbraz3/php-system-docs) page.
 
+## Table of Contents
+
+- [Braz LEMP Docker Image](#braz-lemp-docker-image)
+  - [Build Status](#build-status)
+  - [Tags](#tags)
+  - [Flavors](#flavors)
+  - [How to Use](#how-to-use)
+  - [Manage PHP Directives via Environment Variables](#manage-php-directives-via-environment-variables)
+  - [Cronjobs](#cronjobs)
+  - [Sending Mails](#sending-mails)
+  - [Contribution](#contribution)
+  - [Donation](#donation)
+  - [License](#license)
+
 ## Build Status
 
 [![Build Base Images](https://github.com/fbraz3/lemp-docker/actions/workflows/base-images.yml/badge.svg)](https://github.com/fbraz3/lemp-docker/actions/workflows/base-images.yml) [![Build Phalcon Images](https://github.com/fbraz3/lemp-docker/actions/workflows/phalcon-images.yml/badge.svg)](https://github.com/fbraz3/lemp-docker/actions/workflows/phalcon-images.yml)
