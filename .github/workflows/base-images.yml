@@ -1,4 +1,4 @@
-name: Build Base Images
+name: PHP Vanilla
 
 on:
   workflow_dispatch:
