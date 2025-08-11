@@ -1,3 +1,7 @@
+[![Build Base Images](https://github.com/fbraz3/lemp-docker/actions/workflows/base-images.yml/badge.svg)](https://github.com/fbraz3/lemp-docker/actions/workflows/base-images.yml)
+[![Build Phalcon Images](https://github.com/fbraz3/lemp-docker/actions/workflows/phalcon-images.yml/badge.svg)](https://github.com/fbraz3/lemp-docker/actions/workflows/phalcon-images.yml)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/fbraz3/lemp-docker)
+
 # Braz LEMP Docker Image
 
 This repository provides Docker images for LNMP stack (`L`inux, `N`ginx, `M`ariaDB, and `P`HP-FPM), commonly referred to as LEMP.
@@ -6,14 +10,11 @@ It is designed to simplify the deployment of PHP applications with a robust and 
 
 The images are built on top of other modular images from the `fbraz3` ecosystem, ensuring flexibility, maintainability, and ease of use.
 
-We also provide an AI generated [DeepWiki Page](https://deepwiki.com/fbraz3/lemp-docker) with more technical information.
-
 💡 For a complete list of available images, please visit the [PHP System Docs](https://github.com/fbraz3/php-system-docs) page.
 
 ## Table of Contents
 
 - [Braz LEMP Docker Image](#braz-lemp-docker-image)
-  - [Build Status](#build-status)
   - [Image Versions](#image-versions)
   - [Tags](#tags)
   - [Flavors](#flavors)
@@ -29,10 +30,6 @@ We also provide an AI generated [DeepWiki Page](https://deepwiki.com/fbraz3/lemp
   - [Contribution](#contribution)
   - [Donation](#donation)
   - [License](#license)
-
-## Build Status
-
-[![Build Base Images](https://github.com/fbraz3/lemp-docker/actions/workflows/base-images.yml/badge.svg)](https://github.com/fbraz3/lemp-docker/actions/workflows/base-images.yml) [![Build Phalcon Images](https://github.com/fbraz3/lemp-docker/actions/workflows/phalcon-images.yml/badge.svg)](https://github.com/fbraz3/lemp-docker/actions/workflows/phalcon-images.yml)
 
 ## Image Versions
 
