@@ -45,86 +45,170 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # BUILD AMD64 IMAGE
-      - name: Build PHP Base Image - amd64
+      # BUILD DEVELOPMENT VERSION AMD64
+      - name: Build PHP Base Dev Image - amd64
         uses: docker/build-push-action@v6
         with:
           platforms: linux/amd64
           context: .
-          file: flavors/vanilla/Dockerfile
+          file: flavors/vanilla/Dockerfile.dev
           load: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
             PHP_VERSION=${{ matrix.php_version }}
           tags: |
-            fbraz3/lnmp:${{ matrix.php_version }}-amd64
+            fbraz3/lnmp:${{ matrix.php_version }}-amd64-dev
 
-      - name: Test images - amd64
+      - name: Test Dev images - amd64
         run: |
-          docker run --name test -v $PWD:/app/public -p 80:80 -p 3306:3306 -it --rm -d --platform=linux/amd64 fbraz3/lnmp:${{ matrix.php_version }}-amd64
+          docker run --name test-dev -v $PWD:/app/public -p 80:80 -p 3306:3306 -it --rm -d --platform=linux/amd64 fbraz3/lnmp:${{ matrix.php_version }}-amd64-dev
           sleep 60
           echo "-----------"
-          docker logs test
-          docker exec -i test ps faux
+          docker logs test-dev
+          docker exec -i test-dev ps faux
           echo "-----------"
-          docker exec -i test ps faux |grep -q "mariadbd"  || exit 1
-          docker exec -i test mysqladmin ping || exit 1
+          docker exec -i test-dev ps faux |grep -q "mariadbd"  || exit 1
+          docker exec -i test-dev mysqladmin ping || exit 1
           telnet 127.0.0.1 3306 |grep -q Connected
           curl http://127.0.0.1/ | grep -q "Hello World" || exit 1
           curl http://127.0.0.1/pma/ |grep "<title>" |grep -iq phpMyAdmin || exit 1
-          docker exec -i test monit summary || exit 1
-          docker stop test
+          docker exec -i test-dev monit summary || exit 1
+          docker stop test-dev
         env:
           PHP_VERSION: ${{ matrix.php_version }}
 
-      # BUILD ARM64 IMAGE
-      - name: Build PHP Base Image - arm64
+      # BUILD PRODUCTION VERSION AMD64
+      - name: Build PHP Base Prod Image - amd64
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64
+          context: .
+          file: flavors/vanilla/Dockerfile.prod
+          load: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            PHP_VERSION=${{ matrix.php_version }}
+          tags: |
+            fbraz3/lnmp:${{ matrix.php_version }}-amd64-prod
+
+      - name: Test Prod images - amd64
+        run: |
+          docker run --name test-prod -v $PWD:/app/public -p 8080:80 -p 3307:3306 -e MYSQL_ROOT_PASSWORD=testpassword123 -it --rm -d --platform=linux/amd64 fbraz3/lnmp:${{ matrix.php_version }}-amd64-prod
+          sleep 60
+          echo "-----------"
+          docker logs test-prod
+          docker exec -i test-prod ps faux
+          echo "-----------"
+          docker exec -i test-prod ps faux |grep -q "mariadbd"  || exit 1
+          docker exec -i test-prod mysqladmin -u root -ptestpassword123 ping || exit 1
+          telnet 127.0.0.1 3307 |grep -q Connected
+          curl http://127.0.0.1:8080/ | grep -q "Hello World" || exit 1
+          # Ensure phpMyAdmin is NOT accessible in production
+          ! curl -f http://127.0.0.1:8080/pma/ || exit 1
+          docker exec -i test-prod monit summary || exit 1
+          docker stop test-prod
+        env:
+          PHP_VERSION: ${{ matrix.php_version }}
+
+      # BUILD DEVELOPMENT VERSION ARM64
+      - name: Build PHP Base Dev Image - arm64
         uses: docker/build-push-action@v6
         with:
           platforms: linux/arm64
           context: .
-          file: flavors/vanilla/Dockerfile
+          file: flavors/vanilla/Dockerfile.dev
           load: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
             PHP_VERSION=${{ matrix.php_version }}
           tags: |
-            fbraz3/lnmp:${{ matrix.php_version }}-arm64
+            fbraz3/lnmp:${{ matrix.php_version }}-arm64-dev
 
-      - name: Test images - arm64
+      - name: Test Dev images - arm64
         run: |
-          docker run --name test -v $PWD:/app/public -p 80:80 -p 3306:3306 -it --rm -d --platform=linux/arm64 fbraz3/lnmp:${{ matrix.php_version }}-arm64
+          docker run --name test-dev-arm -v $PWD:/app/public -p 80:80 -p 3306:3306 -it --rm -d --platform=linux/arm64 fbraz3/lnmp:${{ matrix.php_version }}-arm64-dev
           sleep 60
           echo "-----------"
-          docker logs test
-          docker exec -i test ps faux
+          docker logs test-dev-arm
+          docker exec -i test-dev-arm ps faux
           echo "-----------"
-          docker exec -i test ps faux |grep -q "mariadbd"  || exit 1
-          docker exec -i test mysqladmin ping || exit 1
+          docker exec -i test-dev-arm ps faux |grep -q "mariadbd"  || exit 1
+          docker exec -i test-dev-arm mysqladmin ping || exit 1
           telnet 127.0.0.1 3306 |grep -q Connected
           curl http://127.0.0.1/ | grep -q "Hello World" || exit 1
           curl http://127.0.0.1/pma/ |grep "<title>" |grep -iq phpMyAdmin || exit 1
-          docker exec -i test monit summary || exit 1
-          docker stop test
+          docker exec -i test-dev-arm monit summary || exit 1
+          docker stop test-dev-arm
         env:
           PHP_VERSION: ${{ matrix.php_version }}
 
-      # BUILD AND PUSH MULTI-ARCH IMAGE
-      # Github Actions cache is used to speed up the build process and ensure that the tests are run on the latest image
+      # BUILD PRODUCTION VERSION ARM64
+      - name: Build PHP Base Prod Image - arm64
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/arm64
+          context: .
+          file: flavors/vanilla/Dockerfile.prod
+          load: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            PHP_VERSION=${{ matrix.php_version }}
+          tags: |
+            fbraz3/lnmp:${{ matrix.php_version }}-arm64-prod
+
+      - name: Test Prod images - arm64
+        run: |
+          docker run --name test-prod-arm -v $PWD:/app/public -p 8080:80 -p 3307:3306 -e MYSQL_ROOT_PASSWORD=testpassword123 -it --rm -d --platform=linux/arm64 fbraz3/lnmp:${{ matrix.php_version }}-arm64-prod
+          sleep 60
+          echo "-----------"
+          docker logs test-prod-arm
+          docker exec -i test-prod-arm ps faux
+          echo "-----------"
+          docker exec -i test-prod-arm ps faux |grep -q "mariadbd"  || exit 1
+          docker exec -i test-prod-arm mysqladmin -u root -ptestpassword123 ping || exit 1
+          telnet 127.0.0.1 3307 |grep -q Connected
+          curl http://127.0.0.1:8080/ | grep -q "Hello World" || exit 1
+          # Ensure phpMyAdmin is NOT accessible in production
+          ! curl -f http://127.0.0.1:8080/pma/ || exit 1
+          docker exec -i test-prod-arm monit summary || exit 1
+          docker stop test-prod-arm
+        env:
+          PHP_VERSION: ${{ matrix.php_version }}
+
+      # BUILD AND PUSH MULTI-ARCH IMAGES
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and Push PHP Base Images
+      - name: Build and Push PHP Base Dev Images
         uses: docker/build-push-action@v6
         with:
           platforms: linux/amd64,linux/arm64
           context: .
-          file: flavors/vanilla/Dockerfile
+          file: flavors/vanilla/Dockerfile.dev
+          push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            PHP_VERSION=${{ matrix.php_version }}
+          tags: |
+            fbraz3/lnmp:${{ matrix.php_version }}-dev
+            fbraz3/lemp:${{ matrix.php_version }}-dev
+            ${{ matrix.is_latest && 'fbraz3/lnmp:latest-dev' || '' }}
+            ${{ matrix.is_latest && 'fbraz3/lemp:latest-dev' || '' }}
+
+      - name: Build and Push PHP Base Prod Images
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64,linux/arm64
+          context: .
+          file: flavors/vanilla/Dockerfile.prod
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max

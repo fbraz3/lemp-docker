@@ -45,13 +45,13 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # BUILD AMD64 IMAGE
-      - name: Build PHP Phalcon Image - amd64
+      # BUILD PHALCON DEVELOPMENT VERSION AMD64
+      - name: Build PHP Phalcon Dev Image - amd64
         uses: docker/build-push-action@v6
         with:
           platforms: linux/amd64
           context: .
-          file: flavors/vanilla/Dockerfile
+          file: flavors/vanilla/Dockerfile.dev
           load: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -59,33 +59,68 @@ jobs:
             PHP_VERSION=${{ matrix.php_version }}
             BUILD_FLAVOR=-phalcon
           tags: |
-            fbraz3/lnmp:${{ matrix.php_version }}-amd64-phalcon
+            fbraz3/lnmp:${{ matrix.php_version }}-amd64-phalcon-dev
 
-      - name: Test images - amd64
+      - name: Test Phalcon Dev images - amd64
         run: |
-          docker run --name test -v $PWD:/app/public -p 80:80 -p 3306:3306 -it --rm -d --platform=linux/amd64 fbraz3/lnmp:${{ matrix.php_version }}-amd64-phalcon
+          docker run --name test-phalcon-dev -v $PWD:/app/public -p 80:80 -p 3306:3306 -it --rm -d --platform=linux/amd64 fbraz3/lnmp:${{ matrix.php_version }}-amd64-phalcon-dev
           sleep 60
           echo "-----------"
-          docker logs test
-          docker exec -i test ps faux
+          docker logs test-phalcon-dev
+          docker exec -i test-phalcon-dev ps faux
           echo "-----------"
-          docker exec -i test ps faux |grep -q "mariadbd"  || exit 1
-          docker exec -i test mysqladmin ping || exit 1
+          docker exec -i test-phalcon-dev ps faux |grep -q "mariadbd"  || exit 1
+          docker exec -i test-phalcon-dev mysqladmin ping || exit 1
           telnet 127.0.0.1 3306 |grep -q Connected
           curl http://127.0.0.1/ | grep -q "Hello World" || exit 1
           curl http://127.0.0.1/pma/ |grep "<title>" |grep -iq phpMyAdmin || exit 1
-          docker exec -i test monit summary || exit 1
-          docker stop test
+          docker exec -i test-phalcon-dev monit summary || exit 1
+          docker stop test-phalcon-dev
         env:
           PHP_VERSION: ${{ matrix.php_version }}
 
-      # BUILD ARM64 IMAGE
-      - name: Build PHP Phalcon Image - arm64
+      # BUILD PHALCON PRODUCTION VERSION AMD64
+      - name: Build PHP Phalcon Prod Image - amd64
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64
+          context: .
+          file: flavors/vanilla/Dockerfile.prod
+          load: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            PHP_VERSION=${{ matrix.php_version }}
+            BUILD_FLAVOR=-phalcon
+          tags: |
+            fbraz3/lnmp:${{ matrix.php_version }}-amd64-phalcon-prod
+
+      - name: Test Phalcon Prod images - amd64
+        run: |
+          docker run --name test-phalcon-prod -v $PWD:/app/public -p 8080:80 -p 3307:3306 -e MYSQL_ROOT_PASSWORD=testpassword123 -it --rm -d --platform=linux/amd64 fbraz3/lnmp:${{ matrix.php_version }}-amd64-phalcon-prod
+          sleep 60
+          echo "-----------"
+          docker logs test-phalcon-prod
+          docker exec -i test-phalcon-prod ps faux
+          echo "-----------"
+          docker exec -i test-phalcon-prod ps faux |grep -q "mariadbd"  || exit 1
+          docker exec -i test-phalcon-prod mysqladmin -u root -ptestpassword123 ping || exit 1
+          telnet 127.0.0.1 3307 |grep -q Connected
+          curl http://127.0.0.1:8080/ | grep -q "Hello World" || exit 1
+          # Ensure phpMyAdmin is NOT accessible in production
+          ! curl -f http://127.0.0.1:8080/pma/ || exit 1
+          docker exec -i test-phalcon-prod monit summary || exit 1
+          docker stop test-phalcon-prod
+        env:
+          PHP_VERSION: ${{ matrix.php_version }}
+
+      # BUILD PHALCON DEVELOPMENT VERSION ARM64
+      - name: Build PHP Phalcon Dev Image - arm64
         uses: docker/build-push-action@v6
         with:
           platforms: linux/arm64
           context: .
-          file: flavors/vanilla/Dockerfile
+          file: flavors/vanilla/Dockerfile.dev
           load: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -93,40 +128,92 @@ jobs:
             PHP_VERSION=${{ matrix.php_version }}
             BUILD_FLAVOR=-phalcon
           tags: |
-            fbraz3/lnmp:${{ matrix.php_version }}-arm64-phalcon
+            fbraz3/lnmp:${{ matrix.php_version }}-arm64-phalcon-dev
 
-      - name: Test images - arm64
+      - name: Test Phalcon Dev images - arm64
         run: |
-          docker run --name test -v $PWD:/app/public -p 80:80 -p 3306:3306 -it --rm -d --platform=linux/arm64 fbraz3/lnmp:${{ matrix.php_version }}-arm64-phalcon
+          docker run --name test-phalcon-dev-arm -v $PWD:/app/public -p 80:80 -p 3306:3306 -it --rm -d --platform=linux/arm64 fbraz3/lnmp:${{ matrix.php_version }}-arm64-phalcon-dev
           sleep 60
           echo "-----------"
-          docker logs test
-          docker exec -i test ps faux
+          docker logs test-phalcon-dev-arm
+          docker exec -i test-phalcon-dev-arm ps faux
           echo "-----------"
-          docker exec -i test ps faux |grep -q "mariadbd"  || exit 1
-          docker exec -i test mysqladmin ping || exit 1
+          docker exec -i test-phalcon-dev-arm ps faux |grep -q "mariadbd"  || exit 1
+          docker exec -i test-phalcon-dev-arm mysqladmin ping || exit 1
           telnet 127.0.0.1 3306 |grep -q Connected
           curl http://127.0.0.1/ | grep -q "Hello World" || exit 1
           curl http://127.0.0.1/pma/ |grep "<title>" |grep -iq phpMyAdmin || exit 1
-          docker exec -i test monit summary || exit 1
-          docker stop test
+          docker exec -i test-phalcon-dev-arm monit summary || exit 1
+          docker stop test-phalcon-dev-arm
         env:
           PHP_VERSION: ${{ matrix.php_version }}
 
-      # BUILD AND PUSH MULTI-ARCH IMAGE
-      # Github Actions cache is used to speed up the build process and ensure that the tests are run on the latest image
+      # BUILD PHALCON PRODUCTION VERSION ARM64
+      - name: Build PHP Phalcon Prod Image - arm64
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/arm64
+          context: .
+          file: flavors/vanilla/Dockerfile.prod
+          load: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            PHP_VERSION=${{ matrix.php_version }}
+            BUILD_FLAVOR=-phalcon
+          tags: |
+            fbraz3/lnmp:${{ matrix.php_version }}-arm64-phalcon-prod
+
+      - name: Test Phalcon Prod images - arm64
+        run: |
+          docker run --name test-phalcon-prod-arm -v $PWD:/app/public -p 8080:80 -p 3307:3306 -e MYSQL_ROOT_PASSWORD=testpassword123 -it --rm -d --platform=linux/arm64 fbraz3/lnmp:${{ matrix.php_version }}-arm64-phalcon-prod
+          sleep 60
+          echo "-----------"
+          docker logs test-phalcon-prod-arm
+          docker exec -i test-phalcon-prod-arm ps faux
+          echo "-----------"
+          docker exec -i test-phalcon-prod-arm ps faux |grep -q "mariadbd"  || exit 1
+          docker exec -i test-phalcon-prod-arm mysqladmin -u root -ptestpassword123 ping || exit 1
+          telnet 127.0.0.1 3307 |grep -q Connected
+          curl http://127.0.0.1:8080/ | grep -q "Hello World" || exit 1
+          # Ensure phpMyAdmin is NOT accessible in production
+          ! curl -f http://127.0.0.1:8080/pma/ || exit 1
+          docker exec -i test-phalcon-prod-arm monit summary || exit 1
+          docker stop test-phalcon-prod-arm
+        env:
+          PHP_VERSION: ${{ matrix.php_version }}
+
+      # BUILD AND PUSH MULTI-ARCH IMAGES
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and Push PHP Phalcon Images
+      - name: Build and Push PHP Phalcon Dev Images
         uses: docker/build-push-action@v6
         with:
           platforms: linux/amd64,linux/arm64
           context: .
-          file: flavors/vanilla/Dockerfile
+          file: flavors/vanilla/Dockerfile.dev
+          push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            PHP_VERSION=${{ matrix.php_version }}
+            BUILD_FLAVOR=-phalcon
+          tags: |
+            fbraz3/lnmp:${{ matrix.php_version }}-phalcon-dev
+            fbraz3/lemp:${{ matrix.php_version }}-phalcon-dev
+            ${{ matrix.is_latest && 'fbraz3/lnmp:latest-phalcon-dev' || '' }}
+            ${{ matrix.is_latest && 'fbraz3/lemp:latest-phalcon-dev' || '' }}
+
+      - name: Build and Push PHP Phalcon Prod Images
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64,linux/arm64
+          context: .
+          file: flavors/vanilla/Dockerfile.prod
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
