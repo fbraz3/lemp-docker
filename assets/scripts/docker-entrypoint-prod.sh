@@ -2,15 +2,15 @@
 
 $(which chmod) 700 /etc/monit/monitrc
 
-# Check if MYSQL_ROOT_PASSWORD is set, if not use default
-MYSQL_DEFAULT_PASSWORD="defaultrootpassword"
-if [ -z "$MYSQL_ROOT_PASSWORD" ]; then
-    echo "Error: MYSQL_ROOT_PASSWORD must be set."
-    exit 1
-fi
-
 # Set MySQL root password if not already set
 if [ ! -f /var/lib/mysql/.mysql_configured ]; then
+    # Check if MYSQL_ROOT_PASSWORD is set, if not use default
+    MYSQL_DEFAULT_PASSWORD="defaultrootpassword"
+    if [ -z "$MYSQL_ROOT_PASSWORD" ]; then
+        echo "Error: MYSQL_ROOT_PASSWORD must be set."
+        exit 1
+    fi
+
     echo "Configuring MySQL for production..."
     /etc/init.d/mariadb start
     sleep 5
