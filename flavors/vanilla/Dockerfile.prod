@@ -12,6 +12,8 @@ ENV ENTRYPOINT_COMMAND="/usr/bin/tail -f /var/log/nginx/*.log"
 COPY ../../assets/scripts/docker-entrypoint-prod.sh /entrypoints/3-mariadb-entrypoint.sh
 RUN chmod +x /entrypoints/3-mariadb-entrypoint.sh
 
+RUN apt-get update && apt-get upgrade -y
+
 # Install MariaDB
 RUN for i in {1..10}; do \
       apt-get install -yq mariadb-server mariadb-client && break || sleep 10; \
