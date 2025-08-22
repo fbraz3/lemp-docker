@@ -118,6 +118,9 @@ services:
     image: fbraz3/lnmp:8.4  # or fbraz3/lnmp:8.4-phalcon
     environment:
       - MYSQL_ROOT_PASSWORD=your_secure_password_here
+      - MYSQL_APP_DATABASE=my_application  # Optional: create app database
+      - MYSQL_APP_USER=app_user            # Optional: create app user
+      - MYSQL_APP_USER_PASSWD=app_password # Optional: app user password
     volumes:
       - ./:/app/public/
       - mysql_data:/var/lib/mysql
@@ -201,14 +204,25 @@ project/
 
 ### Production Images
 
-| Variable              | Required | Default               | Description               |
-|-----------------------|----------|-----------------------|---------------------------|
-| `MYSQL_ROOT_PASSWORD` | Yes      | `defaultrootpassword` | Root password for MariaDB |
+| Variable                | Required | Default               | Description                        |
+|-------------------------|----------|-----------------------|------------------------------------|
+| `MYSQL_ROOT_PASSWORD`   | Yes      | `defaultrootpassword` | Root password for MariaDB          |
+| `MYSQL_APP_DATABASE`    | No       | -                     | Create application database        |
+| `MYSQL_APP_USER`        | No       | -                     | Create application user            |
+| `MYSQL_APP_USER_PASSWD` | No       | -                     | Password for application user      |
 
 **Example:**
 ```bash
-docker run -e MYSQL_ROOT_PASSWORD=mySecurePassword123 fbraz3/lnmp:8.4
+docker run -e MYSQL_ROOT_PASSWORD=mySecurePassword123 \
+           -e MYSQL_APP_DATABASE=my_app \
+           -e MYSQL_APP_USER=app_user \
+           -e MYSQL_APP_USER_PASSWD=app_secure_password \
+           fbraz3/lnmp:8.4
 ```
+
+**Note:** 
+- When `MYSQL_APP_USER` and `MYSQL_APP_USER_PASSWD` are provided, the user will be granted full privileges on the database specified by `MYSQL_APP_DATABASE` (if provided).
+- **Important:** `MYSQL_APP_USER` and `MYSQL_APP_USER_PASSWD` must be used together. Creating a user without a password is a security risk and is not supported.
 
 ### Development Images
 
