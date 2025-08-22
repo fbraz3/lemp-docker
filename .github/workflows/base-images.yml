@@ -51,7 +51,7 @@ jobs:
         with:
           platforms: linux/amd64
           context: .
-          file: flavors/vanilla/Dockerfile.dev
+          file: flavors/vanilla/dev/Dockerfile
           load: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -84,7 +84,7 @@ jobs:
         with:
           platforms: linux/amd64
           context: .
-          file: flavors/vanilla/Dockerfile.prod
+          file: flavors/vanilla/prod/Dockerfile
           load: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -95,7 +95,7 @@ jobs:
 
       - name: Test Prod images - amd64
         run: |
-          docker run --name test-prod -v $PWD:/app/public -p 8080:80 -p 3307:3306 -e MYSQL_ROOT_PASSWORD=testpassword123 -it --rm -d --platform=linux/amd64 fbraz3/lnmp:${{ matrix.php_version }}-amd64-prod
+          docker run --name test-prod -v $PWD:/app/public -p 8080:80 -p 3307:3306 -e MYSQL_ROOT_PASSWORD=testpassword123 -e MYSQL_APP_DATABASE=test_app_db -e MYSQL_APP_USER=app_user -e MYSQL_APP_USER_PASSWD=app_password123 -it --rm -d --platform=linux/amd64 fbraz3/lnmp:${{ matrix.php_version }}-amd64-prod
           sleep 60
           echo "-----------"
           docker logs test-prod
@@ -108,6 +108,9 @@ jobs:
           # Ensure phpMyAdmin is NOT accessible in production
           ! curl -f http://127.0.0.1:8080/pma/ || exit 1
           docker exec -i test-prod monit summary || exit 1
+          # Test app database and user creation
+          docker exec -i test-prod mysql -u root -ptestpassword123 -e "USE test_app_db;" || exit 1
+          docker exec -i test-prod mysql -u app_user -papp_password123 -e "SELECT 1;" || exit 1
           docker stop test-prod
         env:
           PHP_VERSION: ${{ matrix.php_version }}
@@ -118,7 +121,7 @@ jobs:
         with:
           platforms: linux/arm64
           context: .
-          file: flavors/vanilla/Dockerfile.dev
+          file: flavors/vanilla/dev/Dockerfile
           load: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -151,7 +154,7 @@ jobs:
         with:
           platforms: linux/arm64
           context: .
-          file: flavors/vanilla/Dockerfile.prod
+          file: flavors/vanilla/prod/Dockerfile
           load: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -162,7 +165,7 @@ jobs:
 
       - name: Test Prod images - arm64
         run: |
-          docker run --name test-prod-arm -v $PWD:/app/public -p 8080:80 -p 3307:3306 -e MYSQL_ROOT_PASSWORD=testpassword123 -it --rm -d --platform=linux/arm64 fbraz3/lnmp:${{ matrix.php_version }}-arm64-prod
+          docker run --name test-prod-arm -v $PWD:/app/public -p 8080:80 -p 3307:3306 -e MYSQL_ROOT_PASSWORD=testpassword123 -e MYSQL_APP_DATABASE=test_app_db -e MYSQL_APP_USER=app_user -e MYSQL_APP_USER_PASSWD=app_password123 -it --rm -d --platform=linux/arm64 fbraz3/lnmp:${{ matrix.php_version }}-arm64-prod
           sleep 60
           echo "-----------"
           docker logs test-prod-arm
@@ -175,6 +178,9 @@ jobs:
           # Ensure phpMyAdmin is NOT accessible in production
           ! curl -f http://127.0.0.1:8080/pma/ || exit 1
           docker exec -i test-prod-arm monit summary || exit 1
+          # Test app database and user creation
+          docker exec -i test-prod-arm mysql -u root -ptestpassword123 -e "USE test_app_db;" || exit 1
+          docker exec -i test-prod-arm mysql -u app_user -papp_password123 -e "SELECT 1;" || exit 1
           docker stop test-prod-arm
         env:
           PHP_VERSION: ${{ matrix.php_version }}
@@ -191,7 +197,7 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64
           context: .
-          file: flavors/vanilla/Dockerfile.dev
+          file: flavors/vanilla/dev/Dockerfile
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -208,7 +214,7 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64
           context: .
-          file: flavors/vanilla/Dockerfile.prod
+          file: flavors/vanilla/prod/Dockerfile
           push: true
           cache-from: type=gha
           cache-to: type=gha,mode=max

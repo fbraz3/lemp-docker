@@ -21,6 +21,21 @@ if [ ! -f /var/lib/mysql/.mysql_configured ]; then
         exit 1
     fi
 
+    if [ -n "$MYSQL_APP_DATABASE" ]; then
+        echo "Creating database: $MYSQL_APP_DATABASE"
+        mysql -u root -e "CREATE DATABASE IF NOT EXISTS \`$MYSQL_APP_DATABASE\`;"
+    fi
+
+    if [ -n "$MYSQL_APP_USER" ] && [ -n "$MYSQL_APP_USER_PASSWD" ]; then
+        echo "Creating user: $MYSQL_APP_USER"
+        mysql -u root -e "CREATE USER IF NOT EXISTS '$MYSQL_APP_USER'@'%' IDENTIFIED BY '$MYSQL_APP_USER_PASSWD';"
+        if [ -n "$MYSQL_APP_DATABASE" ]; then
+          mysql -u root -e "GRANT ALL PRIVILEGES ON \`$MYSQL_APP_DATABASE\`.* TO '$MYSQL_APP_USER'@'localhost';"
+          mysql -u root -e "GRANT ALL PRIVILEGES ON \`$MYSQL_APP_DATABASE\`.* TO '$MYSQL_APP_USER'@'%';"
+          mysql -u root -e "FLUSH PRIVILEGES;"
+        fi
+    fi
+
     # read all .sql files from /sql directory and execute them
     for sql_file in /sql-scripts/*.sql; do
         if [ -f "$sql_file" ]; then
