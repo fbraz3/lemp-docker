@@ -49,6 +49,7 @@ RUN apt-get update && \
 COPY --from=builder /var/www/html/pma /var/www/html/pma
 
 COPY ../../assets/scripts/docker-entrypoint.sh /entrypoints/3-mariadb-entrypoint.sh
+COPY ../../assets/scripts/healthcheck.sh /healthcheck.sh
 COPY ../../assets/phpmyadmin/config.inc.php /var/www/html/pma/config.inc.php
 COPY ../../assets/mariadb/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
 COPY ../../assets/nginx/pma.conf /etc/nginx/custom-conf/01-pma.conf
@@ -56,7 +57,7 @@ COPY ../../assets/monit/mariadb /etc/monit/conf-enabled/
 COPY ../../assets/scripts/build.sql /
 
 # Setup database, create phpMyAdmin session directory with secure permissions, and fix ownership
-RUN chmod +x /entrypoints/3-mariadb-entrypoint.sh && \
+RUN chmod +x /entrypoints/3-mariadb-entrypoint.sh /healthcheck.sh && \
     /etc/init.d/mariadb start && \
     sleep 5 && \
     mysql < /build.sql && \
@@ -66,3 +67,4 @@ RUN chmod +x /entrypoints/3-mariadb-entrypoint.sh && \
 
 USER www-data
 ENTRYPOINT ["/docker-entrypoint.sh"]
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 CMD /healthcheck.sh

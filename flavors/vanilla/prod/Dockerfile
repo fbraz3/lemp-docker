@@ -20,12 +20,13 @@ RUN apt-get update && apt-get upgrade -y && \
 
 # Copy configuration files and scripts
 COPY ../../assets/scripts/docker-entrypoint-prod.sh /entrypoints/3-mariadb-entrypoint.sh
+COPY ../../assets/scripts/healthcheck.sh /healthcheck.sh
 COPY ../../assets/mariadb/50-server-prod.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
 COPY ../../assets/monit/mariadb /etc/monit/conf-enabled/
 COPY ../../assets/scripts/build-prod.sql /
 
 # Setup database, create SQL scripts directory, and fix permissions in one optimized layer
-RUN chmod +x /entrypoints/3-mariadb-entrypoint.sh && \
+RUN chmod +x /entrypoints/3-mariadb-entrypoint.sh /healthcheck.sh && \
     /etc/init.d/mariadb start && \
     sleep 5 && \
     mysql < /build-prod.sql && \
@@ -35,3 +36,4 @@ RUN chmod +x /entrypoints/3-mariadb-entrypoint.sh && \
 
 USER www-data
 ENTRYPOINT ["/docker-entrypoint.sh"]
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 CMD /healthcheck.sh
