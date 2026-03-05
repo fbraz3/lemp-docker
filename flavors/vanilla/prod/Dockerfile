@@ -34,6 +34,6 @@ RUN chmod +x /entrypoints/3-mariadb-entrypoint.sh /healthcheck.sh && \
     mkdir /sql-scripts && chmod 755 /sql-scripts && \
     chown -R www-data. /sql-scripts /run/mysqld /usr/lib/mysql /var/log/mysql /var/lib/mysql /lib/mysql/ /etc/mysql/
 
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 CMD /healthcheck.sh
 USER www-data
 ENTRYPOINT ["/docker-entrypoint.sh"]
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 CMD /healthcheck.sh
