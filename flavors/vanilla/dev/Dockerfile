@@ -12,14 +12,14 @@ ARG PHPMYADMIN_OLD=4.8.5
 ARG PHPMYADMIN=5.2.2
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get upgrade -y && \
+RUN apt-get update --allow-releaseinfo-change && apt-get upgrade -y && \
     for i in {1..10}; do \
-        apt-get install -yq wget unzip && break || sleep 10; \
+    apt-get install -yq wget unzip && break || sleep 10; \
     done && \
     if [ "$(echo "$PHP_VERSION" | cut -d. -f1)" -lt 8 ]; then \
-        PHPMYADMIN="${PHPMYADMIN_OLD}"; \
+    PHPMYADMIN="${PHPMYADMIN_OLD}"; \
     else \
-        PHPMYADMIN="${PHPMYADMIN}"; \
+    PHPMYADMIN="${PHPMYADMIN}"; \
     fi && \
     cd /var/www/html && \
     wget -q "https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN/phpMyAdmin-$PHPMYADMIN-all-languages.zip" && \
@@ -39,9 +39,9 @@ ARG BUILD_ARCH
 ENV DEBIAN_FRONTEND=noninteractive
 ENV ENTRYPOINT_COMMAND="/usr/bin/tail -f /var/log/nginx/*.log"
 
-RUN apt-get update && \
+RUN apt-get update --allow-releaseinfo-change && \
     for i in {1..10}; do \
-        apt-get install -yq mariadb-server mariadb-client && break || sleep 10; \
+    apt-get install -yq mariadb-server mariadb-client && break || sleep 10; \
     done && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
