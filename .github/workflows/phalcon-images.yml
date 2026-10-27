@@ -2,8 +2,16 @@ name: PHP Phalcon
 
 on:
   workflow_dispatch:
+    inputs:
+      no_cache:
+        description: 'Build without cache (force package updates)'
+        type: boolean
+        default: false
   schedule:
     - cron: '0 9 * * 3'
+
+env:
+  CACHE_VERSION: cache-v2
 
 jobs:
   build_images:
@@ -53,9 +61,11 @@ jobs:
           platforms: linux/amd64
           context: .
           file: flavors/vanilla/dev/Dockerfile
+          pull: true
+          no-cache: ${{ github.event_name == 'schedule' || inputs.no_cache == true }}
           load: true
-          cache-from: type=gha
-          cache-to: type=gha,mode=min
+          cache-from: type=gha,scope=${{ env.CACHE_VERSION }}-${{ github.workflow }}-${{ matrix.php_version }}-dev-amd64
+          cache-to: type=gha,mode=min,scope=${{ env.CACHE_VERSION }}-${{ github.workflow }}-${{ matrix.php_version }}-dev-amd64
           build-args: |
             PHP_VERSION=${{ matrix.php_version }}
             BUILD_FLAVOR=-phalcon
@@ -87,9 +97,11 @@ jobs:
           platforms: linux/amd64
           context: .
           file: flavors/vanilla/prod/Dockerfile
+          pull: true
+          no-cache: ${{ github.event_name == 'schedule' || inputs.no_cache == true }}
           load: true
-          cache-from: type=gha
-          cache-to: type=gha,mode=min
+          cache-from: type=gha,scope=${{ env.CACHE_VERSION }}-${{ github.workflow }}-${{ matrix.php_version }}-prod-amd64
+          cache-to: type=gha,mode=min,scope=${{ env.CACHE_VERSION }}-${{ github.workflow }}-${{ matrix.php_version }}-prod-amd64
           build-args: |
             PHP_VERSION=${{ matrix.php_version }}
             BUILD_FLAVOR=-phalcon
@@ -125,9 +137,11 @@ jobs:
           platforms: linux/arm64
           context: .
           file: flavors/vanilla/dev/Dockerfile
+          pull: true
+          no-cache: ${{ github.event_name == 'schedule' || inputs.no_cache == true }}
           load: true
-          cache-from: type=gha
-          cache-to: type=gha,mode=min
+          cache-from: type=gha,scope=${{ env.CACHE_VERSION }}-${{ github.workflow }}-${{ matrix.php_version }}-dev-arm64
+          cache-to: type=gha,mode=min,scope=${{ env.CACHE_VERSION }}-${{ github.workflow }}-${{ matrix.php_version }}-dev-arm64
           build-args: |
             PHP_VERSION=${{ matrix.php_version }}
             BUILD_FLAVOR=-phalcon
@@ -159,9 +173,11 @@ jobs:
           platforms: linux/arm64
           context: .
           file: flavors/vanilla/prod/Dockerfile
+          pull: true
+          no-cache: ${{ github.event_name == 'schedule' || inputs.no_cache == true }}
           load: true
-          cache-from: type=gha
-          cache-to: type=gha,mode=min
+          cache-from: type=gha,scope=${{ env.CACHE_VERSION }}-${{ github.workflow }}-${{ matrix.php_version }}-prod-arm64
+          cache-to: type=gha,mode=min,scope=${{ env.CACHE_VERSION }}-${{ github.workflow }}-${{ matrix.php_version }}-prod-arm64
           build-args: |
             PHP_VERSION=${{ matrix.php_version }}
             BUILD_FLAVOR=-phalcon
@@ -203,9 +219,13 @@ jobs:
           platforms: linux/amd64,linux/arm64
           context: .
           file: flavors/vanilla/dev/Dockerfile
+          pull: true
+          no-cache: ${{ github.event_name == 'schedule' || inputs.no_cache == true }}
           push: true
-          cache-from: type=gha
-          cache-to: type=gha,mode=min
+          cache-from: |
+            type=gha,scope=${{ env.CACHE_VERSION }}-${{ github.workflow }}-${{ matrix.php_version }}-dev-amd64
+            type=gha,scope=${{ env.CACHE_VERSION }}-${{ github.workflow }}-${{ matrix.php_version }}-dev-arm64
+          cache-to: type=gha,mode=min,scope=${{ env.CACHE_VERSION }}-${{ github.workflow }}-${{ matrix.php_version }}-dev-multi
           build-args: |
             PHP_VERSION=${{ matrix.php_version }}
             BUILD_FLAVOR=-phalcon
@@ -221,9 +241,13 @@ jobs:
           platforms: linux/amd64,linux/arm64
           context: .
           file: flavors/vanilla/prod/Dockerfile
+          pull: true
+          no-cache: ${{ github.event_name == 'schedule' || inputs.no_cache == true }}
           push: true
-          cache-from: type=gha
-          cache-to: type=gha,mode=min
+          cache-from: |
+            type=gha,scope=${{ env.CACHE_VERSION }}-${{ github.workflow }}-${{ matrix.php_version }}-prod-amd64
+            type=gha,scope=${{ env.CACHE_VERSION }}-${{ github.workflow }}-${{ matrix.php_version }}-prod-arm64
+          cache-to: type=gha,mode=min,scope=${{ env.CACHE_VERSION }}-${{ github.workflow }}-${{ matrix.php_version }}-prod-multi
           build-args: |
             PHP_VERSION=${{ matrix.php_version }}
             BUILD_FLAVOR=-phalcon
